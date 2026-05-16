@@ -1,0 +1,83 @@
+---
+title: "Forecasting: Principles and Practice - Chapter 2 Exercises"
+subtitle: "2.10 Exercise 1"
+author: "2176071KimSooMin"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: false
+    number_sections: false
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{fontspec}
+  - \setmainfont{AppleGothic}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo    = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width  = 7,
+  fig.height = 4
+)
+```
+
+```{r load-packages}
+library(fpp3)
+```
+
+## 1. Bricks (aus_production)
+
+```{r help-bricks, eval=FALSE}
+?aus_production
+```
+
+```{r bricks}
+interval(aus_production)
+aus_production |> autoplot(Bricks)
+```
+Bricks 데이터의 period는 분기(Quarterly) 단위이다.
+
+## 2. Lynx (pelt)
+
+```{r help-lynx, eval=FALSE}
+?pelt
+```
+
+```{r lynx}
+interval(pelt)
+pelt |> autoplot(Lynx)
+```
+Lynx 데이터의 period는 연도(Annual) 단위이다.
+
+## 3. Close (gafa_stock)
+
+```{r help-gafa, eval=FALSE}
+?gafa_stock
+```
+
+```{r gafa}
+interval(gafa_stock)
+gafa_stock |> autoplot(Close)
+```
+Close 데이터의 period는 일별(Daily) 거래일 기준이다. (`[1D]`)
+주말 및 공휴일이 제외된 비정규(irregular) 시계열이라는 점을 알 수 있다.
+
+## 4. Demand (vic_elec)
+
+```{r help-demand, eval=FALSE}
+?vic_elec
+```
+
+```{r demand}
+interval(vic_elec)
+vic_elec |>
+  autoplot(Demand) +
+  labs(
+    title = "Victoria Electricity Demand",
+    x = "Time",
+    y = "Demand (MWh)"
+  )
+```
+Demand 데이터의 period는 30분 단위이다.

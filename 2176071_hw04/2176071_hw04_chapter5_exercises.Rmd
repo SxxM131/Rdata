@@ -1,0 +1,487 @@
+---
+title: "Forecasting: Principles and Practice - Chapter 5 Exercises"
+subtitle: "5.11 Exercise 1, 3, 5, 7, 9, 11"
+author: "2176071 김수민"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: false
+    number_sections: false
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{fontspec}
+  - \setmainfont{AppleGothic}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 7,
+  fig.height = 4
+)
+```
+
+```{r load-packages}
+library(fpp3)
+```
+
+---
+
+## Exercise 1
+
+각 시계열의 특성에 맞는 벤치마크 방법을 골라 예측을 수행했다. 기준은 계절성 유무와 추세 존재 여부다. 계절성이 뚜렷하면 `SNAIVE()`, 추세만 있고 계절성이 없으면 `RW(drift)`, 둘 다 없으면 `NAIVE()`를 사용했다.
+
+### 호주 인구 (Australian Population)
+
+인구 데이터는 연간 데이터라 계절성이 없고, 꾸준히 오르는 추세만 있다. `RW(drift)`가 적합하다.
+
+```{r ex1-population}
+global_economy |>
+  filter(Country == "Australia") |>
+  model(RW(Population ~ drift())) |>
+  forecast(h = 10) |>
+  autoplot(global_economy |> filter(Country == "Australia")) +
+  labs(
+    title = "Australian Population — RW with Drift",
+    y = "Population"
+  )
+```
+
+### 벽돌 생산량 (Bricks)
+
+분기별 데이터로 계절 패턴이 있어 `SNAIVE()`를 썼다.
+
+```{r ex1-bricks}
+aus_production |>
+  filter(!is.na(Bricks)) |>
+  model(SNAIVE(Bricks)) |>
+  forecast(h = 8) |>
+  autoplot(aus_production |> filter(!is.na(Bricks))) +
+  labs(
+    title = "Bricks Production — Seasonal Naïve",
+    y = "Bricks (million)"
+  )
+```
+
+### NSW 양 (NSW Lambs)
+
+월별 가축 데이터라 계절성이 있다. `SNAIVE()`를 적용했다.
+
+```{r ex1-lambs}
+aus_livestock |>
+  filter(State == "New South Wales", Animal == "Lambs") |>
+  model(SNAIVE(Count)) |>
+  forecast(h = 12) |>
+  autoplot(aus_livestock |> filter(State == "New South Wales", Animal == "Lambs")) +
+  labs(
+    title = "NSW Lambs — Seasonal Naïve",
+    y = "Count (thousands)"
+  )
+```
+
+### 가계 자산 (Household Wealth)
+
+연간 데이터라 계절성이 없고 추세가 있다. `RW(drift)`를 사용했다.
+
+```{r ex1-wealth}
+hh_budget |>
+  model(RW(Wealth ~ drift())) |>
+  forecast(h = 5) |>
+  autoplot(hh_budget) +
+  labs(
+    title = "Household Wealth — RW with Drift",
+    y = "Wealth"
+  )
+```
+
+### 호주 테이크아웃 음식 매출 (Takeaway Food Turnover)
+
+월별 데이터로 계절성이 분명히 있다. `SNAIVE()`를 사용했다.
+
+```{r ex1-takeaway}
+aus_retail |>
+  filter(Industry == "Takeaway food services") |>
+  summarise(Turnover = sum(Turnover)) |>
+  model(SNAIVE(Turnover)) |>
+  forecast(h = 24) |>
+  autoplot(
+    aus_retail |>
+      filter(Industry == "Takeaway food services") |>
+      summarise(Turnover = sum(Turnover))
+  ) +
+  labs(
+    title = "Takeaway Food Turnover — Seasonal Naïve",
+    y = "Turnover ($M)"
+  )
+```
+
+---
+
+## Exercise 3
+
+1992년 이후 분기별 호주 맥주 생산량에 `SNAIVE()`를 적합하고 잔차를 진단했다.
+
+```{r ex3-fit}
+recent_production <- aus_production |>
+  filter(year(Quarter) >= 1992)
+
+fit3 <- recent_production |>
+  model(SNAIVE(Beer))
+```
+
+```{r ex3-residuals, fig.height=5}
+fit3 |> gg_tsresiduals() +
+  labs(title = "Residual Diagnostics — Beer Production SNAIVE")
+```
+
+```{r ex3-forecast}
+fit3 |>
+  forecast() |>
+  autoplot(recent_production) +
+  labs(
+    title = "Beer Production Forecast — Seasonal Naïve (1992~)",
+    y = "Beer (megalitres)"
+  )
+```
+
+```{r ex3-ljungbox}
+augment(fit3) |>
+  features(.innov, ljung_box, lag = 8, dof = 0)
+```
+
+잔차 그림을 보면 ACF에서 lag 4 근처에 유의한 스파이크가 하나 보인다. 히스토그램은 대략 정규분포 형태이긴 한데, Ljung-Box 검정 결과 p-value가 0.05보다 작게 나왔다. 즉 잔차에 자기상관이 일부 남아있어서 완전한 백색잡음이라고 보기는 어렵다. `SNAIVE()`가 계절성은 잘 잡지만 추가적인 패턴은 아직 남아있다는 뜻이다.
+
+---
+
+## Exercise 5
+
+빅토리아주 가축 7종에 `SNAIVE()`를 일괄 적합하고 예측을 시각화했다.
+
+```{r ex5-forecast, fig.height=8}
+vic_livestock <- aus_livestock |>
+  filter(State == "Victoria")
+
+vic_livestock |>
+  model(SNAIVE(Count)) |>
+  forecast(h = 16) |>
+  autoplot(vic_livestock) +
+  facet_wrap(~Animal, scales = "free_y", ncol = 2) +
+  labs(
+    title = "Victorian Livestock — Seasonal Naïve Forecasts",
+    y = "Count (thousands)"
+  ) +
+  theme(legend.position = "none")
+```
+
+동물 종류마다 계절 패턴의 강도가 꽤 다르다. 양(Lambs, Sheep)처럼 계절성이 뚜렷한 시리즈에서는 `SNAIVE()`가 나름 합리적인 벤치마크가 된다. 반면 소(Cattle)처럼 추세 변동이 크거나 패턴이 불규칙한 시리즈에서는 단순히 지난해 같은 분기를 반복하는 방식이 체계적인 오차를 낼 수 있어서 벤치마크로서 한계가 있다.
+
+---
+
+## Exercise 7
+
+2장 7번 과제에서 선택한 소매 시계열에 `SNAIVE()`를 적합하고 예측 정확도를 평가했다.
+
+```{r ex7-series}
+set.seed(2176071)
+
+myseries <- aus_retail |>
+  filter(`Series ID` == sample(aus_retail$`Series ID`, 1))
+
+myseries |> distinct(`Series ID`, State, Industry)
+```
+
+### (a) 훈련셋 생성
+
+```{r ex7-train}
+myseries_train <- myseries |>
+  filter(year(Month) < 2011)
+```
+
+### (b) 분할 확인
+
+```{r ex7-split-plot}
+autoplot(myseries, Turnover) +
+  autolayer(myseries_train, Turnover, colour = "red") +
+  labs(
+    title = "Training set (red) vs Full series",
+    y = "Turnover ($M)"
+  )
+```
+
+2011년 이전 데이터가 빨간색으로, 이후가 파란색으로 잘 나뉜 것을 확인할 수 있다.
+
+### (c) SNAIVE 적합
+
+```{r ex7-fit}
+fit7 <- myseries_train |>
+  model(SNAIVE(Turnover))
+```
+
+### (d) 잔차 진단
+
+```{r ex7-residuals, fig.height=5}
+fit7 |> gg_tsresiduals() +
+  labs(title = "Residual Diagnostics — SNAIVE")
+```
+
+```{r ex7-ljungbox}
+augment(fit7) |>
+  features(.innov, ljung_box, lag = 24, dof = 0)
+```
+
+잔차 시계열을 보면 분산이 시간이 갈수록 점점 커지는 경향이 있다(이분산). ACF에서도 여러 lag에서 유의한 자기상관이 남아 있다. 이 데이터는 추세가 강해서 `SNAIVE()`만으로는 그 부분을 잡지 못하고 잔차에 패턴이 남는 것으로 보인다. Ljung-Box p-value도 매우 작게 나와서 잔차가 백색잡음이라고 보기 어렵다. 정규성은 대략 만족하는 편이다.
+
+### (e) 테스트 기간 예측
+
+```{r ex7-forecast}
+fc7 <- fit7 |>
+  forecast(new_data = anti_join(myseries, myseries_train))
+
+fc7 |>
+  autoplot(myseries) +
+  labs(
+    title = "SNAIVE Forecast vs Actual (test period)",
+    y = "Turnover ($M)"
+  )
+```
+
+### (f) 정확도 비교
+
+```{r ex7-accuracy}
+cat("훈련셋 정확도\n")
+fit7 |> accuracy()
+
+cat("\n테스트셋 정확도\n")
+fc7 |> accuracy(myseries)
+```
+
+테스트셋 RMSSE가 1보다 상당히 크게 나왔다. 이는 `SNAIVE()` 자체의 계절 naïve 오차보다도 실제 예측 오차가 더 크다는 뜻으로, 추세 성분 때문에 먼 미래로 갈수록 오차가 급격히 쌓이는 것으로 해석할 수 있다.
+
+### (g) 훈련 데이터 양에 따른 민감도
+
+```{r ex7-sensitivity}
+cutoffs <- c(2005, 2007, 2009, 2011)
+
+sensitivity <- purrr::map_dfr(cutoffs, function(yr) {
+  train <- myseries |> filter(year(Month) < yr)
+  test <- myseries |> filter(year(Month) >= yr)
+
+  fc <- train |>
+    model(SNAIVE(Turnover)) |>
+    forecast(new_data = test)
+
+  acc <- fc |> accuracy(myseries)
+
+  tibble(cutoff = yr, RMSSE = acc$RMSSE, MASE = acc$MASE)
+})
+
+print(sensitivity)
+```
+
+훈련 종료 시점을 바꿔봤더니 2005년처럼 훈련 기간이 짧을수록 오차가 더 크고, 2011년에 가까울수록 약간 줄어드는 경향이 있다. 다만 이 데이터는 추세가 강하다 보니 어떤 훈련셋을 써도 `SNAIVE()`의 오차가 전반적으로 크다. 정확도 지표가 훈련 데이터 크기에 다소 민감하게 반응한다.
+
+---
+
+## Exercise 9
+
+가계 자산(hh_budget) 데이터에서 마지막 4년을 테스트셋으로 분리하고 여러 벤치마크를 비교했다.
+
+### (a) 훈련/테스트 분리
+
+```{r ex9-split}
+hh_train <- hh_budget |>
+  filter(Year <= max(Year) - 4)
+
+hh_test <- hh_budget |>
+  filter(Year > max(Year) - 4)
+```
+
+### (b) 벤치마크 적합
+
+연간 데이터라 계절성이 없어서 `MEAN()`, `NAIVE()`, `RW(drift)`를 비교했다.
+
+```{r ex9-fit}
+fit9 <- hh_train |>
+  model(
+    Mean  = MEAN(Wealth),
+    Naive = NAIVE(Wealth),
+    Drift = RW(Wealth ~ drift())
+  )
+
+fit9 |>
+  forecast(h = 4) |>
+  autoplot(hh_budget, level = NULL) +
+  labs(
+    title = "Household Wealth — Benchmark Comparison",
+    y = "Wealth"
+  )
+```
+
+### (c) 정확도 비교
+
+```{r ex9-accuracy}
+fit9 |>
+  forecast(h = 4) |>
+  accuracy(hh_budget)
+```
+
+세 방법 중 `RW(drift)`의 RMSSE가 가장 낮게 나왔다. 가계 자산은 꾸준히 오르는 추세가 있어서 추세를 반영하는 drift 방법이 단순 평균이나 naïve보다 유리한 것으로 보인다.
+
+### (d) 최적 방법 잔차 진단
+
+```{r ex9-residuals, fig.height=5}
+fit9 |>
+  filter(Country == "Australia") |>
+  select(Drift) |>
+  gg_tsresiduals() +
+  labs(title = "Residual Diagnostics — RW with Drift (Australia)")
+```
+
+```{r ex9-ljungbox}
+augment(fit9 |> select(Drift)) |>
+  features(.innov, ljung_box, lag = 10, dof = 1)
+```
+
+잔차를 보면 ACF에서 유의한 패턴은 거의 없고, 히스토그램도 대략 종 모양이라 백색잡음에 가깝다. Ljung-Box p-value도 0.05 이상으로 나와서 잔차에 큰 문제는 없는 것으로 판단된다.
+
+---
+
+## Exercise 11
+
+호주 분기별 벽돌 생산량(Bricks, 1956~2005)에 STL 분해를 적용하고 예측을 수행했다.
+
+```{r ex11-data}
+bricks <- aus_production |>
+  filter(!is.na(Bricks))
+```
+
+### (a) STL 분해 — 고정 vs 변화 계절성
+
+```{r ex11-stl-fixed, fig.height=5}
+bricks |>
+  model(STL(Bricks ~ trend(window = 13) + season(window = "periodic"))) |>
+  components() |>
+  autoplot() +
+  labs(title = "STL — 고정 계절성 (window = 'periodic')")
+```
+
+```{r ex11-stl-changing, fig.height=5}
+bricks |>
+  model(STL(Bricks ~ trend(window = 13) + season(window = 7))) |>
+  components() |>
+  autoplot() +
+  labs(title = "STL — 변화 계절성 (window = 7)")
+```
+
+고정 계절성과 변화 계절성을 둘 다 해봤는데, 이 데이터에서는 계절 성분이 시간이 지나도 크게 달라지지 않아서 두 결과가 비슷하다. 뒤 과정에서는 고정 계절성을 기준으로 진행했다.
+
+### (b) 계절 조정 데이터
+
+```{r ex11-sadj}
+bricks |>
+  model(STL(Bricks ~ season(window = "periodic"))) |>
+  components() |>
+  as_tsibble() |>
+  autoplot(season_adjust) +
+  labs(
+    title = "Seasonally Adjusted Bricks Production",
+    y = "Bricks (million)"
+  )
+```
+
+### (c) + (d) decomposition_model로 재계절화 예측
+
+```{r ex11-decomp-forecast}
+fit11 <- bricks |>
+  model(
+    stl_naive = decomposition_model(
+      STL(Bricks ~ season(window = "periodic")),
+      NAIVE(season_adjust)
+    )
+  )
+
+fit11 |>
+  forecast(h = 8) |>
+  autoplot(bricks) +
+  labs(
+    title = "Bricks — STL + NAIVE (재계절화)",
+    y = "Bricks (million)"
+  )
+```
+
+### (e) 잔차 진단
+
+```{r ex11-residuals, fig.height=5}
+fit11 |> gg_tsresiduals() +
+  labs(title = "Residual Diagnostics — STL + NAIVE")
+```
+
+```{r ex11-ljungbox}
+augment(fit11) |>
+  features(.innov, ljung_box, lag = 8, dof = 0)
+```
+
+잔차 ACF를 보면 대부분의 lag에서 유의한 자기상관이 없어서 잔차가 대체로 비상관이라고 볼 수 있다. Ljung-Box p-value도 0.05보다 크게 나왔다.
+
+### (f) Robust STL 비교
+
+```{r ex11-robust, fig.height=5}
+bricks |>
+  model(STL(Bricks ~ season(window = "periodic"), robust = TRUE)) |>
+  components() |>
+  autoplot() +
+  labs(title = "Robust STL 분해")
+```
+
+```{r ex11-robust-forecast}
+fit11_robust <- bricks |>
+  model(
+    stl_robust = decomposition_model(
+      STL(Bricks ~ season(window = "periodic"), robust = TRUE),
+      NAIVE(season_adjust)
+    )
+  )
+
+fit11_robust |>
+  forecast(h = 8) |>
+  autoplot(bricks) +
+  labs(
+    title = "Bricks — Robust STL + NAIVE",
+    y = "Bricks (million)"
+  )
+```
+
+Robust STL을 써도 예측 결과가 크게 달라지지는 않는다. 이 데이터에 이상치가 두드러지게 많지는 않아서 그런 것 같다.
+
+### (g) SNAIVE vs STL+NAIVE — 마지막 2년 테스트
+
+```{r ex11-compare}
+bricks_train <- bricks |> slice(1:(n() - 8))
+
+fit_compare <- bricks_train |>
+  model(
+    SNAIVE = SNAIVE(Bricks),
+    STL_NAIVE = decomposition_model(
+      STL(Bricks ~ season(window = "periodic")),
+      NAIVE(season_adjust)
+    )
+  )
+
+fit_compare |>
+  forecast(h = 8) |>
+  autoplot(bricks, level = NULL) +
+  labs(
+    title = "SNAIVE vs STL+NAIVE — 마지막 2년 테스트",
+    y = "Bricks (million)"
+  )
+```
+
+```{r ex11-accuracy}
+fit_compare |>
+  forecast(h = 8) |>
+  accuracy(bricks)
+```
+
+RMSSE 기준으로 `STL+NAIVE`가 `SNAIVE`보다 낮은 오차를 보였다. STL이 추세 성분을 별도로 분리해서 예측하기 때문에 단순히 지난 계절값을 반복하는 `SNAIVE`보다 유리한 것으로 해석된다.

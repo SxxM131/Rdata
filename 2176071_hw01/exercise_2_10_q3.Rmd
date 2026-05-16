@@ -1,0 +1,72 @@
+---
+title: "Forecasting: Principles and Practice - Chapter 2 Exercises"
+subtitle: "2.10 Exercise 3"
+author: "2176071KimSooMin"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: false
+    number_sections: false
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{fontspec}
+  - \setmainfont{AppleGothic}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo    = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width  = 7,
+  fig.height = 4
+)
+```
+
+```{r load-packages}
+library(fpp3)
+library(readr)
+```
+
+## tute1 데이터 불러오기 및 기본 확인
+
+```{r read-data}
+tute1 <- read_csv("tute1.csv")
+```
+
+```{r view-data, eval=FALSE}
+View(tute1)  # RStudio에서 데이터 뷰어로 내용 확인
+```
+
+```{r head-data}
+head(tute1)
+```
+
+## tsibble 객체 변환
+
+```{r tsibble-convert}
+mytimeseries <- tute1 |>
+  # yearquarter(): 문자열 날짜를 분기 형식으로 변환
+  mutate(Quarter = yearquarter(Quarter)) |>
+  # as_tsibble(): tsibble 시계열 객체로 변환, index는 시간 열 지정
+  as_tsibble(index = Quarter)
+```
+
+## 시계열 그래프 비교 (facet_grid 유무)
+
+```{r, fig.height=6}
+mytimeseries |>
+  pivot_longer(-Quarter) |>
+  ggplot(aes(x = Quarter, y = value, colour = name)) +
+  geom_line() +
+  facet_grid(name ~ ., scales = "free_y")
+```
+위는 `facet_grid()`를 적용한 그래프다. 변수마다 그래프 창이 나뉘어 각 변동 추이가 명확하게 볼 수 있다.
+
+```{r}
+mytimeseries |>
+  pivot_longer(-Quarter) |>
+  ggplot(aes(x = Quarter, y = value, colour = name)) +
+  geom_line()
+```
+만약 `facet_grid()`를 쓰지 않으면 하나의 그래프 안에 세 변수가 전부 그려진다. 세 변수의 **y축 범위(scale)**가 달라 GDP처럼 값이 작은 변수는 변화량을 제대로 확인하기 어렵다.

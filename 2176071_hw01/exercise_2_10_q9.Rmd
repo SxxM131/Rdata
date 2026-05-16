@@ -1,0 +1,33 @@
+---
+title: "Forecasting: Principles and Practice - Chapter 2 Exercises"
+subtitle: "2.10 Exercise 9"
+author: "2176071KimSooMin"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: false
+    number_sections: false
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{fontspec}
+  - \setmainfont{AppleGothic}
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+### 정답 및 설명
+
+- 1번 그림 (Daily temperature of cow) -> B 그래프
+  - 뚜렷한 추세나 주기적 패턴이 없고, 불규칙하게 변동한다. ACF 그래프를 봐도 처음 lag만 의미 있고 금방 떨어지며, 특별하게 튀는 주기 같은 것이 보이지 않는다.
+
+- 2번 그림 (Monthly accidental deaths) -> A 그래프
+  - 반년 단위의 짧은 주기로 꺾임이 확실하고, 장기적인 추세는 거의 안 보인다. ACF 그래프가 규칙적으로 위아래로 튀는 게 이 계절성의 특징이다. 추세가 없어서 천천히 줄어들지는 않는다.
+
+- 3번 그림 (Monthly air passengers) -> D 그래프
+  - 계속 위로 올라가는 우상향 추세에다가 변동폭이 커지는 계절성이 같이 있다. ACF 그래프를 보면 전반적으로 높게 형성돼서(추세 탓) 천천히 떨어지면서 일정한 봉우리가 찍히는(계절성) 모습을 띠고 있다.
+
+- 4번 그림 (Annual mink trappings) -> C 그래프
+  - 장기적인 추세라기보다 10년 정도 단위 사이클로 주기적으로 오르내리는 순환 형태가 뚜렷하다. ACF 그래프에서도 크게 곡선을 그리며 떨어지는 모습인데, 이런 파동 형태가 일반적인 사이클 데이터의 특징이다.

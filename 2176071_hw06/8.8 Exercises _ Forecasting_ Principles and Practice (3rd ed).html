@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)https://otexts.com/fpp3/expsmooth-exercises.html -->
+<html lang="" xml:lang=""><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>8.8 Exercises | Forecasting: Principles&nbsp;and&nbsp;Practice (3rd&nbsp;ed)</title>
+  <meta name="description" content="3rd edition">
+  <meta name="generator" content="bookdown 0.46 and GitBook 2.6.7">
+
+  <meta property="og:title" content="8.8 Exercises | Forecasting: Principles and Practice (3rd ed)">
+  <meta property="og:type" content="book">
+  <meta property="og:image" content="https://Otexts.com/fpp3///figs/fpp3_front_cover.jpg">
+  <meta property="og:description" content="3rd edition">
+  
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="8.8 Exercises | Forecasting: Principles and Practice (3rd ed)">
+  <meta name="twitter:site" content="@robjhyndman">
+  <meta name="twitter:description" content="3rd edition">
+  <meta name="twitter:image" content="https://Otexts.com/fpp3///figs/fpp3_front_cover.jpg">
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="https://otexts.com/fpp3/ets-forecasting.html">
+<link rel="next" href="https://otexts.com/fpp3/expsmooth-reading.html">
+<script type="text/javascript" async="" src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/js"></script><script type="text/javascript" async="" src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/analytics.js"></script><script type="text/javascript" async="" src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/js(1)"></script><script src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/jquery-3.6.0.min.js"></script>
+<script src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/fuse.min.js"></script>
+<link href="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/style.css" rel="stylesheet">
+<link href="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/plugin-table.css" rel="stylesheet">
+<link href="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/plugin-bookdown.css" rel="stylesheet">
+<link href="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/plugin-highlight.css" rel="stylesheet">
+<link href="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/plugin-search.css" rel="stylesheet">
+<link href="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/plugin-fontsettings.css" rel="stylesheet">
+<link href="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/plugin-clipboard.css" rel="stylesheet">
+
+
+
+
+
+
+
+
+<link href="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/anchor-sections.css" rel="stylesheet">
+<link href="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/anchor-sections-hash.css" rel="stylesheet">
+<script src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/anchor-sections.js"></script>
+<script src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/kePrint.js"></script>
+<link href="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/lightable.css" rel="stylesheet">
+<link href="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/bootstrapTable.min.css" rel="stylesheet">
+<script src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/bootstrapTable.js"></script>
+<script type="text/x-mathjax-config;executed=true">
+MathJax.Hub.Config({
+  TeX: { 
+    equationNumbers: { autoNumber: "AMS" } ,
+    Macros: {
+      bm: ["\\boldsymbol{#1}",1],
+      y:    ["y_{\\text{#1},#2}",2],
+      yhat: ["\\hat{y}_{\\text{#1},#2}",2],
+      ytilde: ["\\tilde{y}_{\\text{#1},#2}",2],
+      Shat: ["\\hat{S}_{\\text{#1},#2}^{(#3)}",3]
+    }
+  }
+});
+</script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/js(2)"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-27933797-2');
+  gtag('config', 'G-JKBLG3XQGY');
+</script>
+<link href="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/css" rel="stylesheet">
+<link rel="stylesheet" href="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/hack-subset.css">
+<link rel="stylesheet" href="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/all.min.css">
+<script>
+  /*
+   * Light YouTube Embeds by @labnol
+   * Credit: https://www.labnol.org/
+   */
+
+  function labnolIframe(div) {
+    var iframe = document.createElement('iframe');
+    iframe.setAttribute('src', 'https://www.youtube.com/embed/' + div.dataset.id + '?autoplay=1');
+    iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute('allowfullscreen', '1');
+    iframe.setAttribute('allow', 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture');
+    div.parentNode.replaceChild(iframe, div);
+  }
+
+  function initYouTubeVideos() {
+    var playerElements = document.querySelectorAll('.youtube-player');
+    for (var n = 0; n < playerElements.length; n++) {
+      var videoId = playerElements[n].dataset.id;
+      var div = document.createElement('div');
+      div.setAttribute('data-id', videoId);
+      var thumbNode = document.createElement('img');
+      thumbNode.src = '//i.ytimg.com/vi/ID/hqdefault.jpg'.replace('ID', videoId);
+      div.appendChild(thumbNode);
+      var playButton = document.createElement('div');
+      playButton.setAttribute('class', 'play');
+      div.appendChild(playButton);
+      div.onclick = function () {
+        labnolIframe(this);
+      };
+      playerElements[n].appendChild(div);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initYouTubeVideos);
+</script>
+
+
+<style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/style(1).css" type="text/css">
+<script type="text/javascript" async="" src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/MathJax.js"></script><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 5px 0px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 1px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: .7em}
+.MathJax_MenuRadioCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuLabel {padding: 1px 2em 3px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #DDDDDD; margin: 4px 3px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: #606872; color: white}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888; display: contents}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover, .MJXp-munder {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > *, .MJXp-munder > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><style type="text/css">.mjx-chtml {display: inline-block; line-height: 0; text-indent: 0; text-align: left; text-transform: none; font-style: normal; font-weight: normal; font-size: 100%; font-size-adjust: none; letter-spacing: normal; word-wrap: normal; word-spacing: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0; min-height: 0; border: 0; margin: 0; padding: 1px 0}
+.MJXc-display {display: block; text-align: center; margin: 1em 0; padding: 0}
+.mjx-chtml[tabindex]:focus, body :focus .mjx-chtml[tabindex] {display: inline-table}
+.mjx-full-width {text-align: center; display: table-cell!important; width: 10000em}
+.mjx-math {display: inline-block; border-collapse: separate; border-spacing: 0}
+.mjx-math * {display: inline-block; -webkit-box-sizing: content-box!important; -moz-box-sizing: content-box!important; box-sizing: content-box!important; text-align: left}
+.mjx-numerator {display: block; text-align: center}
+.mjx-denominator {display: block; text-align: center}
+.MJXc-stacked {height: 0; position: relative}
+.MJXc-stacked > * {position: absolute}
+.MJXc-bevelled > * {display: inline-block}
+.mjx-stack {display: inline-block}
+.mjx-op {display: block}
+.mjx-under {display: table-cell}
+.mjx-over {display: block}
+.mjx-over > * {padding-left: 0px!important; padding-right: 0px!important}
+.mjx-under > * {padding-left: 0px!important; padding-right: 0px!important}
+.mjx-stack > .mjx-sup {display: block}
+.mjx-stack > .mjx-sub {display: block}
+.mjx-prestack > .mjx-presup {display: block}
+.mjx-prestack > .mjx-presub {display: block}
+.mjx-delim-h > .mjx-char {display: inline-block}
+.mjx-surd {vertical-align: top}
+.mjx-surd + .mjx-box {display: inline-flex}
+.mjx-mphantom * {visibility: hidden}
+.mjx-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 2px 3px; font-style: normal; font-size: 90%}
+.mjx-annotation-xml {line-height: normal}
+.mjx-menclose > svg {fill: none; stroke: currentColor; overflow: visible}
+.mjx-mtr {display: table-row}
+.mjx-mlabeledtr {display: table-row}
+.mjx-mtd {display: table-cell; text-align: center}
+.mjx-label {display: table-row}
+.mjx-box {display: inline-block}
+.mjx-block {display: block}
+.mjx-span {display: inline}
+.mjx-char {display: block; white-space: pre}
+.mjx-itable {display: inline-table; width: auto}
+.mjx-row {display: table-row}
+.mjx-cell {display: table-cell}
+.mjx-table {display: table; width: 100%}
+.mjx-line {display: block; height: 0}
+.mjx-strut {width: 0; padding-top: 1em}
+.mjx-vsize {width: 0}
+.MJXc-space1 {margin-left: .167em}
+.MJXc-space2 {margin-left: .222em}
+.MJXc-space3 {margin-left: .278em}
+.mjx-chartest {display: block; visibility: hidden; position: absolute; top: 0; line-height: normal; font-size: 500%}
+.mjx-chartest .mjx-char {display: inline}
+.mjx-chartest .mjx-box {padding-top: 1000px}
+.MJXc-processing {visibility: hidden; position: fixed; width: 0; height: 0; overflow: hidden}
+.MJXc-processed {display: none}
+.mjx-test {font-style: normal; font-weight: normal; font-size: 100%; font-size-adjust: none; text-indent: 0; text-transform: none; letter-spacing: normal; word-spacing: normal; overflow: hidden; height: 1px}
+.mjx-test.mjx-test-display {display: table!important}
+.mjx-test.mjx-test-inline {display: inline!important; margin-right: -1px}
+.mjx-test.mjx-test-default {display: block!important; clear: both}
+.mjx-ex-box {display: inline-block!important; position: absolute; overflow: hidden; min-height: 0; max-height: none; padding: 0; border: 0; margin: 0; width: 1px; height: 60ex}
+.mjx-test-inline .mjx-left-box {display: inline-block; width: 0; float: left}
+.mjx-test-inline .mjx-right-box {display: inline-block; width: 0; float: right}
+.mjx-test-display .mjx-right-box {display: table-cell!important; width: 10000em!important; min-width: 0; max-width: none; padding: 0; border: 0; margin: 0}
+#MathJax_CHTML_Tooltip {background-color: InfoBackground; color: InfoText; border: 1px solid black; box-shadow: 2px 2px 5px #AAAAAA; -webkit-box-shadow: 2px 2px 5px #AAAAAA; -moz-box-shadow: 2px 2px 5px #AAAAAA; -khtml-box-shadow: 2px 2px 5px #AAAAAA; padding: 3px 4px; z-index: 401; position: absolute; left: 0; top: 0; width: auto; height: auto; display: none}
+.mjx-chtml .mjx-noError {line-height: 1.2; vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+.MJXc-TeX-unknown-R {font-family: STIXGeneral,'Cambria Math','Arial Unicode MS',serif; font-style: normal; font-weight: normal}
+.MJXc-TeX-unknown-I {font-family: STIXGeneral,'Cambria Math','Arial Unicode MS',serif; font-style: italic; font-weight: normal}
+.MJXc-TeX-unknown-B {font-family: STIXGeneral,'Cambria Math','Arial Unicode MS',serif; font-style: normal; font-weight: bold}
+.MJXc-TeX-unknown-BI {font-family: STIXGeneral,'Cambria Math','Arial Unicode MS',serif; font-style: italic; font-weight: bold}
+.MJXc-TeX-ams-R {font-family: MJXc-TeX-ams-R,MJXc-TeX-ams-Rw}
+.MJXc-TeX-cal-B {font-family: MJXc-TeX-cal-B,MJXc-TeX-cal-Bx,MJXc-TeX-cal-Bw}
+.MJXc-TeX-frak-R {font-family: MJXc-TeX-frak-R,MJXc-TeX-frak-Rw}
+.MJXc-TeX-frak-B {font-family: MJXc-TeX-frak-B,MJXc-TeX-frak-Bx,MJXc-TeX-frak-Bw}
+.MJXc-TeX-math-BI {font-family: MJXc-TeX-math-BI,MJXc-TeX-math-BIx,MJXc-TeX-math-BIw}
+.MJXc-TeX-sans-R {font-family: MJXc-TeX-sans-R,MJXc-TeX-sans-Rw}
+.MJXc-TeX-sans-B {font-family: MJXc-TeX-sans-B,MJXc-TeX-sans-Bx,MJXc-TeX-sans-Bw}
+.MJXc-TeX-sans-I {font-family: MJXc-TeX-sans-I,MJXc-TeX-sans-Ix,MJXc-TeX-sans-Iw}
+.MJXc-TeX-script-R {font-family: MJXc-TeX-script-R,MJXc-TeX-script-Rw}
+.MJXc-TeX-type-R {font-family: MJXc-TeX-type-R,MJXc-TeX-type-Rw}
+.MJXc-TeX-cal-R {font-family: MJXc-TeX-cal-R,MJXc-TeX-cal-Rw}
+.MJXc-TeX-main-B {font-family: MJXc-TeX-main-B,MJXc-TeX-main-Bx,MJXc-TeX-main-Bw}
+.MJXc-TeX-main-I {font-family: MJXc-TeX-main-I,MJXc-TeX-main-Ix,MJXc-TeX-main-Iw}
+.MJXc-TeX-main-R {font-family: MJXc-TeX-main-R,MJXc-TeX-main-Rw}
+.MJXc-TeX-math-I {font-family: MJXc-TeX-math-I,MJXc-TeX-math-Ix,MJXc-TeX-math-Iw}
+.MJXc-TeX-size1-R {font-family: MJXc-TeX-size1-R,MJXc-TeX-size1-Rw}
+.MJXc-TeX-size2-R {font-family: MJXc-TeX-size2-R,MJXc-TeX-size2-Rw}
+.MJXc-TeX-size3-R {font-family: MJXc-TeX-size3-R,MJXc-TeX-size3-Rw}
+.MJXc-TeX-size4-R {font-family: MJXc-TeX-size4-R,MJXc-TeX-size4-Rw}
+.MJXc-TeX-vec-R {font-family: MJXc-TeX-vec-R,MJXc-TeX-vec-Rw}
+.MJXc-TeX-vec-B {font-family: MJXc-TeX-vec-B,MJXc-TeX-vec-Bx,MJXc-TeX-vec-Bw}
+@font-face {font-family: MJXc-TeX-ams-R; src: local('MathJax_AMS'), local('MathJax_AMS-Regular')}
+@font-face {font-family: MJXc-TeX-ams-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_AMS-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_AMS-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_AMS-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-cal-B; src: local('MathJax_Caligraphic Bold'), local('MathJax_Caligraphic-Bold')}
+@font-face {font-family: MJXc-TeX-cal-Bx; src: local('MathJax_Caligraphic'); font-weight: bold}
+@font-face {font-family: MJXc-TeX-cal-Bw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Caligraphic-Bold.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Caligraphic-Bold.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Caligraphic-Bold.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-frak-R; src: local('MathJax_Fraktur'), local('MathJax_Fraktur-Regular')}
+@font-face {font-family: MJXc-TeX-frak-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Fraktur-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Fraktur-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Fraktur-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-frak-B; src: local('MathJax_Fraktur Bold'), local('MathJax_Fraktur-Bold')}
+@font-face {font-family: MJXc-TeX-frak-Bx; src: local('MathJax_Fraktur'); font-weight: bold}
+@font-face {font-family: MJXc-TeX-frak-Bw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Fraktur-Bold.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Fraktur-Bold.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Fraktur-Bold.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-math-BI; src: local('MathJax_Math BoldItalic'), local('MathJax_Math-BoldItalic')}
+@font-face {font-family: MJXc-TeX-math-BIx; src: local('MathJax_Math'); font-weight: bold; font-style: italic}
+@font-face {font-family: MJXc-TeX-math-BIw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Math-BoldItalic.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Math-BoldItalic.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Math-BoldItalic.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-sans-R; src: local('MathJax_SansSerif'), local('MathJax_SansSerif-Regular')}
+@font-face {font-family: MJXc-TeX-sans-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_SansSerif-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_SansSerif-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_SansSerif-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-sans-B; src: local('MathJax_SansSerif Bold'), local('MathJax_SansSerif-Bold')}
+@font-face {font-family: MJXc-TeX-sans-Bx; src: local('MathJax_SansSerif'); font-weight: bold}
+@font-face {font-family: MJXc-TeX-sans-Bw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_SansSerif-Bold.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_SansSerif-Bold.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_SansSerif-Bold.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-sans-I; src: local('MathJax_SansSerif Italic'), local('MathJax_SansSerif-Italic')}
+@font-face {font-family: MJXc-TeX-sans-Ix; src: local('MathJax_SansSerif'); font-style: italic}
+@font-face {font-family: MJXc-TeX-sans-Iw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_SansSerif-Italic.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_SansSerif-Italic.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_SansSerif-Italic.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-script-R; src: local('MathJax_Script'), local('MathJax_Script-Regular')}
+@font-face {font-family: MJXc-TeX-script-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Script-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Script-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Script-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-type-R; src: local('MathJax_Typewriter'), local('MathJax_Typewriter-Regular')}
+@font-face {font-family: MJXc-TeX-type-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Typewriter-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Typewriter-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Typewriter-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-cal-R; src: local('MathJax_Caligraphic'), local('MathJax_Caligraphic-Regular')}
+@font-face {font-family: MJXc-TeX-cal-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Caligraphic-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Caligraphic-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Caligraphic-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-main-B; src: local('MathJax_Main Bold'), local('MathJax_Main-Bold')}
+@font-face {font-family: MJXc-TeX-main-Bx; src: local('MathJax_Main'); font-weight: bold}
+@font-face {font-family: MJXc-TeX-main-Bw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Main-Bold.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Main-Bold.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Main-Bold.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-main-I; src: local('MathJax_Main Italic'), local('MathJax_Main-Italic')}
+@font-face {font-family: MJXc-TeX-main-Ix; src: local('MathJax_Main'); font-style: italic}
+@font-face {font-family: MJXc-TeX-main-Iw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Main-Italic.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Main-Italic.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Main-Italic.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-main-R; src: local('MathJax_Main'), local('MathJax_Main-Regular')}
+@font-face {font-family: MJXc-TeX-main-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Main-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Main-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Main-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-math-I; src: local('MathJax_Math Italic'), local('MathJax_Math-Italic')}
+@font-face {font-family: MJXc-TeX-math-Ix; src: local('MathJax_Math'); font-style: italic}
+@font-face {font-family: MJXc-TeX-math-Iw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Math-Italic.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Math-Italic.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Math-Italic.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-size1-R; src: local('MathJax_Size1'), local('MathJax_Size1-Regular')}
+@font-face {font-family: MJXc-TeX-size1-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Size1-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Size1-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Size1-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-size2-R; src: local('MathJax_Size2'), local('MathJax_Size2-Regular')}
+@font-face {font-family: MJXc-TeX-size2-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Size2-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Size2-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Size2-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-size3-R; src: local('MathJax_Size3'), local('MathJax_Size3-Regular')}
+@font-face {font-family: MJXc-TeX-size3-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Size3-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Size3-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Size3-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-size4-R; src: local('MathJax_Size4'), local('MathJax_Size4-Regular')}
+@font-face {font-family: MJXc-TeX-size4-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Size4-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Size4-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Size4-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-vec-R; src: local('MathJax_Vector'), local('MathJax_Vector-Regular')}
+@font-face {font-family: MJXc-TeX-vec-Rw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Vector-Regular.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Vector-Regular.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Vector-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-vec-B; src: local('MathJax_Vector Bold'), local('MathJax_Vector-Bold')}
+@font-face {font-family: MJXc-TeX-vec-Bx; src: local('MathJax_Vector'); font-weight: bold}
+@font-face {font-family: MJXc-TeX-vec-Bw; src /*1*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/eot/MathJax_Vector-Bold.eot'); src /*2*/: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/woff/MathJax_Vector-Bold.woff') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/fonts/HTML-CSS/TeX/otf/MathJax_Vector-Bold.otf') format('opentype')}
+</style></head>
+
+<body><div id="MathJax_Message" style="display: none;"></div>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary"><div class="book-search" role="search"><label for="search-box" aria-hidden="false" hidden="hidden">Type to search</label><input id="search-box" type="search" class="form-control" placeholder="Type to search (Enter for navigation)" title="Use Enter or the &lt;Down&gt; key to navigate to the next match, or the &lt;Up&gt; key to the previous match"></div>
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="https://otexts.com/fpp3/">Forecasting: Principles and Practice</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="https://otexts.com/fpp3/index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="https://otexts.com/fpp3/intro.html"><i class="fa fa-check"></i><b>1</b> Getting started</a>
+<ul style="display: none;">
+<li class="chapter" data-level="1.1" data-path="what-can-be-forecast.html"><a href="https://otexts.com/fpp3/what-can-be-forecast.html"><i class="fa fa-check"></i><b>1.1</b> What can be forecast?</a></li>
+<li class="chapter" data-level="1.2" data-path="planning.html"><a href="https://otexts.com/fpp3/planning.html"><i class="fa fa-check"></i><b>1.2</b> Forecasting, goals and planning</a></li>
+<li class="chapter" data-level="1.3" data-path="determining-what-to-forecast.html"><a href="https://otexts.com/fpp3/determining-what-to-forecast.html"><i class="fa fa-check"></i><b>1.3</b> Determining what to forecast</a></li>
+<li class="chapter" data-level="1.4" data-path="data-methods.html"><a href="https://otexts.com/fpp3/data-methods.html"><i class="fa fa-check"></i><b>1.4</b> Forecasting data and methods</a></li>
+<li class="chapter" data-level="1.5" data-path="case-studies.html"><a href="https://otexts.com/fpp3/case-studies.html"><i class="fa fa-check"></i><b>1.5</b> Some case studies</a></li>
+<li class="chapter" data-level="1.6" data-path="basic-steps.html"><a href="https://otexts.com/fpp3/basic-steps.html"><i class="fa fa-check"></i><b>1.6</b> The basic steps in a forecasting task</a></li>
+<li class="chapter" data-level="1.7" data-path="perspective.html"><a href="https://otexts.com/fpp3/perspective.html"><i class="fa fa-check"></i><b>1.7</b> The statistical forecasting perspective</a></li>
+<li class="chapter" data-level="1.8" data-path="intro-exercises.html"><a href="https://otexts.com/fpp3/intro-exercises.html"><i class="fa fa-check"></i><b>1.8</b> Exercises</a></li>
+<li class="chapter" data-level="1.9" data-path="intro-reading.html"><a href="https://otexts.com/fpp3/intro-reading.html"><i class="fa fa-check"></i><b>1.9</b> Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="graphics.html"><a href="https://otexts.com/fpp3/graphics.html"><i class="fa fa-check"></i><b>2</b> Time series graphics</a>
+<ul style="display: none;">
+<li class="chapter" data-level="2.1" data-path="tsibbles.html"><a href="https://otexts.com/fpp3/tsibbles.html"><i class="fa fa-check"></i><b>2.1</b> <code>tsibble</code> objects</a></li>
+<li class="chapter" data-level="2.2" data-path="time-plots.html"><a href="https://otexts.com/fpp3/time-plots.html"><i class="fa fa-check"></i><b>2.2</b> Time plots</a></li>
+<li class="chapter" data-level="2.3" data-path="tspatterns.html"><a href="https://otexts.com/fpp3/tspatterns.html"><i class="fa fa-check"></i><b>2.3</b> Time series patterns</a></li>
+<li class="chapter" data-level="2.4" data-path="seasonal-plots.html"><a href="https://otexts.com/fpp3/seasonal-plots.html"><i class="fa fa-check"></i><b>2.4</b> Seasonal plots</a></li>
+<li class="chapter" data-level="2.5" data-path="subseries.html"><a href="https://otexts.com/fpp3/subseries.html"><i class="fa fa-check"></i><b>2.5</b> Seasonal subseries plots</a></li>
+<li class="chapter" data-level="2.6" data-path="scatterplots.html"><a href="https://otexts.com/fpp3/scatterplots.html"><i class="fa fa-check"></i><b>2.6</b> Scatterplots</a></li>
+<li class="chapter" data-level="2.7" data-path="lag-plots.html"><a href="https://otexts.com/fpp3/lag-plots.html"><i class="fa fa-check"></i><b>2.7</b> Lag plots</a></li>
+<li class="chapter" data-level="2.8" data-path="acf.html"><a href="https://otexts.com/fpp3/acf.html"><i class="fa fa-check"></i><b>2.8</b> Autocorrelation</a></li>
+<li class="chapter" data-level="2.9" data-path="wn.html"><a href="https://otexts.com/fpp3/wn.html"><i class="fa fa-check"></i><b>2.9</b> White noise</a></li>
+<li class="chapter" data-level="2.10" data-path="graphics-exercises.html"><a href="https://otexts.com/fpp3/graphics-exercises.html"><i class="fa fa-check"></i><b>2.10</b> Exercises</a></li>
+<li class="chapter" data-level="2.11" data-path="graphics-reading.html"><a href="https://otexts.com/fpp3/graphics-reading.html"><i class="fa fa-check"></i><b>2.11</b> Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="decomposition.html"><a href="https://otexts.com/fpp3/decomposition.html"><i class="fa fa-check"></i><b>3</b> Time series decomposition</a>
+<ul style="display: none;">
+<li class="chapter" data-level="3.1" data-path="transformations.html"><a href="https://otexts.com/fpp3/transformations.html"><i class="fa fa-check"></i><b>3.1</b> Transformations and adjustments</a></li>
+<li class="chapter" data-level="3.2" data-path="components.html"><a href="https://otexts.com/fpp3/components.html"><i class="fa fa-check"></i><b>3.2</b> Time series components</a></li>
+<li class="chapter" data-level="3.3" data-path="moving-averages.html"><a href="https://otexts.com/fpp3/moving-averages.html"><i class="fa fa-check"></i><b>3.3</b> Moving averages</a></li>
+<li class="chapter" data-level="3.4" data-path="classical-decomposition.html"><a href="https://otexts.com/fpp3/classical-decomposition.html"><i class="fa fa-check"></i><b>3.4</b> Classical decomposition</a></li>
+<li class="chapter" data-level="3.5" data-path="methods-used-by-official-statistics-agencies.html"><a href="https://otexts.com/fpp3/methods-used-by-official-statistics-agencies.html"><i class="fa fa-check"></i><b>3.5</b> Methods used by official statistics agencies</a></li>
+<li class="chapter" data-level="3.6" data-path="stl.html"><a href="https://otexts.com/fpp3/stl.html"><i class="fa fa-check"></i><b>3.6</b> STL decomposition</a></li>
+<li class="chapter" data-level="3.7" data-path="decomposition-exercises.html"><a href="https://otexts.com/fpp3/decomposition-exercises.html"><i class="fa fa-check"></i><b>3.7</b> Exercises</a></li>
+<li class="chapter" data-level="3.8" data-path="decomposition-reading.html"><a href="https://otexts.com/fpp3/decomposition-reading.html"><i class="fa fa-check"></i><b>3.8</b> Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="features.html"><a href="https://otexts.com/fpp3/features.html"><i class="fa fa-check"></i><b>4</b> Time series features</a>
+<ul style="display: none;">
+<li class="chapter" data-level="4.1" data-path="some-simple-statistics.html"><a href="https://otexts.com/fpp3/some-simple-statistics.html"><i class="fa fa-check"></i><b>4.1</b> Some simple statistics</a></li>
+<li class="chapter" data-level="4.2" data-path="acf-features.html"><a href="https://otexts.com/fpp3/acf-features.html"><i class="fa fa-check"></i><b>4.2</b> ACF features</a></li>
+<li class="chapter" data-level="4.3" data-path="stlfeatures.html"><a href="https://otexts.com/fpp3/stlfeatures.html"><i class="fa fa-check"></i><b>4.3</b> STL Features</a></li>
+<li class="chapter" data-level="4.4" data-path="other-features.html"><a href="https://otexts.com/fpp3/other-features.html"><i class="fa fa-check"></i><b>4.4</b> Other features</a></li>
+<li class="chapter" data-level="4.5" data-path="exploring-australian-tourism-data.html"><a href="https://otexts.com/fpp3/exploring-australian-tourism-data.html"><i class="fa fa-check"></i><b>4.5</b> Exploring Australian tourism data</a></li>
+<li class="chapter" data-level="4.6" data-path="feast-exercises.html"><a href="https://otexts.com/fpp3/feast-exercises.html"><i class="fa fa-check"></i><b>4.6</b> Exercises</a></li>
+<li class="chapter" data-level="4.7" data-path="further-reading.html"><a href="https://otexts.com/fpp3/further-reading.html"><i class="fa fa-check"></i><b>4.7</b> Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="toolbox.html"><a href="https://otexts.com/fpp3/toolbox.html"><i class="fa fa-check"></i><b>5</b> The forecaster’s toolbox</a>
+<ul style="display: none;">
+<li class="chapter" data-level="5.1" data-path="a-tidy-forecasting-workflow.html"><a href="https://otexts.com/fpp3/a-tidy-forecasting-workflow.html"><i class="fa fa-check"></i><b>5.1</b> A tidy forecasting workflow</a></li>
+<li class="chapter" data-level="5.2" data-path="simple-methods.html"><a href="https://otexts.com/fpp3/simple-methods.html"><i class="fa fa-check"></i><b>5.2</b> Some simple forecasting methods</a></li>
+<li class="chapter" data-level="5.3" data-path="residuals.html"><a href="https://otexts.com/fpp3/residuals.html"><i class="fa fa-check"></i><b>5.3</b> Fitted values and residuals</a></li>
+<li class="chapter" data-level="5.4" data-path="diagnostics.html"><a href="https://otexts.com/fpp3/diagnostics.html"><i class="fa fa-check"></i><b>5.4</b> Residual diagnostics</a></li>
+<li class="chapter" data-level="5.5" data-path="prediction-intervals.html"><a href="https://otexts.com/fpp3/prediction-intervals.html"><i class="fa fa-check"></i><b>5.5</b> Distributional forecasts and prediction intervals</a></li>
+<li class="chapter" data-level="5.6" data-path="ftransformations.html"><a href="https://otexts.com/fpp3/ftransformations.html"><i class="fa fa-check"></i><b>5.6</b> Forecasting using transformations</a></li>
+<li class="chapter" data-level="5.7" data-path="forecasting-decomposition.html"><a href="https://otexts.com/fpp3/forecasting-decomposition.html"><i class="fa fa-check"></i><b>5.7</b> Forecasting with decomposition</a></li>
+<li class="chapter" data-level="5.8" data-path="accuracy.html"><a href="https://otexts.com/fpp3/accuracy.html"><i class="fa fa-check"></i><b>5.8</b> Evaluating point forecast accuracy</a></li>
+<li class="chapter" data-level="5.9" data-path="distaccuracy.html"><a href="https://otexts.com/fpp3/distaccuracy.html"><i class="fa fa-check"></i><b>5.9</b> Evaluating distributional forecast accuracy</a></li>
+<li class="chapter" data-level="5.10" data-path="tscv.html"><a href="https://otexts.com/fpp3/tscv.html"><i class="fa fa-check"></i><b>5.10</b> Time series cross-validation</a></li>
+<li class="chapter" data-level="5.11" data-path="toolbox-exercises.html"><a href="https://otexts.com/fpp3/toolbox-exercises.html"><i class="fa fa-check"></i><b>5.11</b> Exercises</a></li>
+<li class="chapter" data-level="5.12" data-path="basics-reading.html"><a href="https://otexts.com/fpp3/basics-reading.html"><i class="fa fa-check"></i><b>5.12</b> Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="judgmental.html"><a href="https://otexts.com/fpp3/judgmental.html"><i class="fa fa-check"></i><b>6</b> Judgmental forecasts</a>
+<ul style="display: none;">
+<li class="chapter" data-level="6.1" data-path="judgmental-limitations.html"><a href="https://otexts.com/fpp3/judgmental-limitations.html"><i class="fa fa-check"></i><b>6.1</b> Beware of limitations</a></li>
+<li class="chapter" data-level="6.2" data-path="judgmental-principles.html"><a href="https://otexts.com/fpp3/judgmental-principles.html"><i class="fa fa-check"></i><b>6.2</b> Key principles</a></li>
+<li class="chapter" data-level="6.3" data-path="delphimethod.html"><a href="https://otexts.com/fpp3/delphimethod.html"><i class="fa fa-check"></i><b>6.3</b> The Delphi method</a></li>
+<li class="chapter" data-level="6.4" data-path="analogies.html"><a href="https://otexts.com/fpp3/analogies.html"><i class="fa fa-check"></i><b>6.4</b> Forecasting by analogy</a></li>
+<li class="chapter" data-level="6.5" data-path="scenarios.html"><a href="https://otexts.com/fpp3/scenarios.html"><i class="fa fa-check"></i><b>6.5</b> Scenario forecasting</a></li>
+<li class="chapter" data-level="6.6" data-path="new-products.html"><a href="https://otexts.com/fpp3/new-products.html"><i class="fa fa-check"></i><b>6.6</b> New product forecasting</a></li>
+<li class="chapter" data-level="6.7" data-path="judgmental-adjustments.html"><a href="https://otexts.com/fpp3/judgmental-adjustments.html"><i class="fa fa-check"></i><b>6.7</b> Judgmental adjustments</a></li>
+<li class="chapter" data-level="6.8" data-path="judgmental-reading.html"><a href="https://otexts.com/fpp3/judgmental-reading.html"><i class="fa fa-check"></i><b>6.8</b> Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="regression.html"><a href="https://otexts.com/fpp3/regression.html"><i class="fa fa-check"></i><b>7</b> Time series regression models</a>
+<ul style="display: none;">
+<li class="chapter" data-level="7.1" data-path="regression-intro.html"><a href="https://otexts.com/fpp3/regression-intro.html"><i class="fa fa-check"></i><b>7.1</b> The linear model</a></li>
+<li class="chapter" data-level="7.2" data-path="least-squares.html"><a href="https://otexts.com/fpp3/least-squares.html"><i class="fa fa-check"></i><b>7.2</b> Least squares estimation</a></li>
+<li class="chapter" data-level="7.3" data-path="regression-evaluation.html"><a href="https://otexts.com/fpp3/regression-evaluation.html"><i class="fa fa-check"></i><b>7.3</b> Evaluating the regression model</a></li>
+<li class="chapter" data-level="7.4" data-path="useful-predictors.html"><a href="https://otexts.com/fpp3/useful-predictors.html"><i class="fa fa-check"></i><b>7.4</b> Some useful predictors</a></li>
+<li class="chapter" data-level="7.5" data-path="selecting-predictors.html"><a href="https://otexts.com/fpp3/selecting-predictors.html"><i class="fa fa-check"></i><b>7.5</b> Selecting predictors</a></li>
+<li class="chapter" data-level="7.6" data-path="forecasting-regression.html"><a href="https://otexts.com/fpp3/forecasting-regression.html"><i class="fa fa-check"></i><b>7.6</b> Forecasting with regression</a></li>
+<li class="chapter" data-level="7.7" data-path="nonlinear-regression.html"><a href="https://otexts.com/fpp3/nonlinear-regression.html"><i class="fa fa-check"></i><b>7.7</b> Nonlinear regression</a></li>
+<li class="chapter" data-level="7.8" data-path="causality.html"><a href="https://otexts.com/fpp3/causality.html"><i class="fa fa-check"></i><b>7.8</b> Correlation, causation and forecasting</a></li>
+<li class="chapter" data-level="7.9" data-path="regression-matrices.html"><a href="https://otexts.com/fpp3/regression-matrices.html"><i class="fa fa-check"></i><b>7.9</b> Matrix formulation</a></li>
+<li class="chapter" data-level="7.10" data-path="regression-exercises.html"><a href="https://otexts.com/fpp3/regression-exercises.html"><i class="fa fa-check"></i><b>7.10</b> Exercises</a></li>
+<li class="chapter" data-level="7.11" data-path="regression-reading.html"><a href="https://otexts.com/fpp3/regression-reading.html"><i class="fa fa-check"></i><b>7.11</b> Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="expsmooth.html"><a href="https://otexts.com/fpp3/expsmooth.html"><i class="fa fa-check"></i><b>8</b> Exponential smoothing</a>
+<ul style="">
+<li class="chapter" data-level="8.1" data-path="ses.html"><a href="https://otexts.com/fpp3/ses.html"><i class="fa fa-check"></i><b>8.1</b> Simple exponential smoothing</a></li>
+<li class="chapter" data-level="8.2" data-path="holt.html"><a href="https://otexts.com/fpp3/holt.html"><i class="fa fa-check"></i><b>8.2</b> Methods with trend</a></li>
+<li class="chapter" data-level="8.3" data-path="holt-winters.html"><a href="https://otexts.com/fpp3/holt-winters.html"><i class="fa fa-check"></i><b>8.3</b> Methods with seasonality</a></li>
+<li class="chapter" data-level="8.4" data-path="taxonomy.html"><a href="https://otexts.com/fpp3/taxonomy.html" title="8.4 A taxonomy of exponential smoothing methods"><i class="fa fa-check"></i><b>8.4</b> A taxonomy of exponential smoothing methods</a></li>
+<li class="chapter" data-level="8.5" data-path="ets.html"><a href="https://otexts.com/fpp3/ets.html" title="8.5 Innovations state space models for exponential smoothing"><i class="fa fa-check"></i><b>8.5</b> Innovations state space models for exponential smoothing</a></li>
+<li class="chapter" data-level="8.6" data-path="ets-estimation.html"><a href="https://otexts.com/fpp3/ets-estimation.html"><i class="fa fa-check"></i><b>8.6</b> Estimation and model selection</a></li>
+<li class="chapter" data-level="8.7" data-path="ets-forecasting.html"><a href="https://otexts.com/fpp3/ets-forecasting.html"><i class="fa fa-check"></i><b>8.7</b> Forecasting with ETS models</a></li>
+<li class="chapter active" data-level="8.8" data-path="expsmooth-exercises.html"><a href="https://otexts.com/fpp3/expsmooth-exercises.html"><i class="fa fa-check"></i><b>8.8</b> Exercises</a></li>
+<li class="chapter" data-level="8.9" data-path="expsmooth-reading.html"><a href="https://otexts.com/fpp3/expsmooth-reading.html"><i class="fa fa-check"></i><b>8.9</b> Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="arima.html"><a href="https://otexts.com/fpp3/arima.html"><i class="fa fa-check"></i><b>9</b> ARIMA models</a>
+<ul style="display: none;">
+<li class="chapter" data-level="9.1" data-path="stationarity.html"><a href="https://otexts.com/fpp3/stationarity.html"><i class="fa fa-check"></i><b>9.1</b> Stationarity and differencing</a></li>
+<li class="chapter" data-level="9.2" data-path="backshift.html"><a href="https://otexts.com/fpp3/backshift.html"><i class="fa fa-check"></i><b>9.2</b> Backshift notation</a></li>
+<li class="chapter" data-level="9.3" data-path="AR.html"><a href="https://otexts.com/fpp3/AR.html"><i class="fa fa-check"></i><b>9.3</b> Autoregressive models</a></li>
+<li class="chapter" data-level="9.4" data-path="MA.html"><a href="https://otexts.com/fpp3/MA.html"><i class="fa fa-check"></i><b>9.4</b> Moving average models</a></li>
+<li class="chapter" data-level="9.5" data-path="non-seasonal-arima.html"><a href="https://otexts.com/fpp3/non-seasonal-arima.html"><i class="fa fa-check"></i><b>9.5</b> Non-seasonal ARIMA models</a></li>
+<li class="chapter" data-level="9.6" data-path="arima-estimation.html"><a href="https://otexts.com/fpp3/arima-estimation.html"><i class="fa fa-check"></i><b>9.6</b> Estimation and order selection</a></li>
+<li class="chapter" data-level="9.7" data-path="arima-r.html"><a href="https://otexts.com/fpp3/arima-r.html"><i class="fa fa-check"></i><b>9.7</b> ARIMA modelling in <code>fable</code></a></li>
+<li class="chapter" data-level="9.8" data-path="arima-forecasting.html"><a href="https://otexts.com/fpp3/arima-forecasting.html"><i class="fa fa-check"></i><b>9.8</b> Forecasting</a></li>
+<li class="chapter" data-level="9.9" data-path="seasonal-arima.html"><a href="https://otexts.com/fpp3/seasonal-arima.html"><i class="fa fa-check"></i><b>9.9</b> Seasonal ARIMA models</a></li>
+<li class="chapter" data-level="9.10" data-path="arima-ets.html"><a href="https://otexts.com/fpp3/arima-ets.html"><i class="fa fa-check"></i><b>9.10</b> ARIMA vs ETS</a></li>
+<li class="chapter" data-level="9.11" data-path="arima-exercises.html"><a href="https://otexts.com/fpp3/arima-exercises.html"><i class="fa fa-check"></i><b>9.11</b> Exercises</a></li>
+<li class="chapter" data-level="9.12" data-path="arima-reading.html"><a href="https://otexts.com/fpp3/arima-reading.html"><i class="fa fa-check"></i><b>9.12</b> Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="dynamic.html"><a href="https://otexts.com/fpp3/dynamic.html"><i class="fa fa-check"></i><b>10</b> Dynamic regression models</a>
+<ul style="display: none;">
+<li class="chapter" data-level="10.1" data-path="estimation.html"><a href="https://otexts.com/fpp3/estimation.html"><i class="fa fa-check"></i><b>10.1</b> Estimation</a></li>
+<li class="chapter" data-level="10.2" data-path="regarima.html"><a href="https://otexts.com/fpp3/regarima.html"><i class="fa fa-check"></i><b>10.2</b> Regression with ARIMA errors using <code>fable</code></a></li>
+<li class="chapter" data-level="10.3" data-path="forecasting.html"><a href="https://otexts.com/fpp3/forecasting.html"><i class="fa fa-check"></i><b>10.3</b> Forecasting</a></li>
+<li class="chapter" data-level="10.4" data-path="stochastic-and-deterministic-trends.html"><a href="https://otexts.com/fpp3/stochastic-and-deterministic-trends.html"><i class="fa fa-check"></i><b>10.4</b> Stochastic and deterministic trends</a></li>
+<li class="chapter" data-level="10.5" data-path="dhr.html"><a href="https://otexts.com/fpp3/dhr.html"><i class="fa fa-check"></i><b>10.5</b> Dynamic harmonic regression</a></li>
+<li class="chapter" data-level="10.6" data-path="lagged-predictors.html"><a href="https://otexts.com/fpp3/lagged-predictors.html"><i class="fa fa-check"></i><b>10.6</b> Lagged predictors</a></li>
+<li class="chapter" data-level="10.7" data-path="dynamic-exercises.html"><a href="https://otexts.com/fpp3/dynamic-exercises.html"><i class="fa fa-check"></i><b>10.7</b> Exercises</a></li>
+<li class="chapter" data-level="10.8" data-path="dynamic-reading.html"><a href="https://otexts.com/fpp3/dynamic-reading.html"><i class="fa fa-check"></i><b>10.8</b> Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="hierarchical.html"><a href="https://otexts.com/fpp3/hierarchical.html" title="11 Forecasting hierarchical and grouped time series"><i class="fa fa-check"></i><b>11</b> Forecasting hierarchical and grouped&nbsp;time series</a>
+<ul style="display: none;">
+<li class="chapter" data-level="11.1" data-path="hts.html"><a href="https://otexts.com/fpp3/hts.html"><i class="fa fa-check"></i><b>11.1</b> Hierarchical and grouped time series</a></li>
+<li class="chapter" data-level="11.2" data-path="single-level.html"><a href="https://otexts.com/fpp3/single-level.html"><i class="fa fa-check"></i><b>11.2</b> Single level approaches</a></li>
+<li class="chapter" data-level="11.3" data-path="reconciliation.html"><a href="https://otexts.com/fpp3/reconciliation.html"><i class="fa fa-check"></i><b>11.3</b> Forecast reconciliation</a></li>
+<li class="chapter" data-level="11.4" data-path="tourism.html"><a href="https://otexts.com/fpp3/tourism.html"><i class="fa fa-check"></i><b>11.4</b> Forecasting Australian domestic tourism</a></li>
+<li class="chapter" data-level="11.5" data-path="rec-prob.html"><a href="https://otexts.com/fpp3/rec-prob.html"><i class="fa fa-check"></i><b>11.5</b> Reconciled distributional forecasts</a></li>
+<li class="chapter" data-level="11.6" data-path="prison.html"><a href="https://otexts.com/fpp3/prison.html"><i class="fa fa-check"></i><b>11.6</b> Forecasting Australian prison population</a></li>
+<li class="chapter" data-level="11.7" data-path="hierarchical-exercises.html"><a href="https://otexts.com/fpp3/hierarchical-exercises.html"><i class="fa fa-check"></i><b>11.7</b> Exercises</a></li>
+<li class="chapter" data-level="11.8" data-path="hierarchical-reading.html"><a href="https://otexts.com/fpp3/hierarchical-reading.html"><i class="fa fa-check"></i><b>11.8</b> Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="advanced.html"><a href="https://otexts.com/fpp3/advanced.html"><i class="fa fa-check"></i><b>12</b> Advanced forecasting methods</a>
+<ul style="display: none;">
+<li class="chapter" data-level="12.1" data-path="complexseasonality.html"><a href="https://otexts.com/fpp3/complexseasonality.html"><i class="fa fa-check"></i><b>12.1</b> Complex seasonality</a></li>
+<li class="chapter" data-level="12.2" data-path="prophet.html"><a href="https://otexts.com/fpp3/prophet.html"><i class="fa fa-check"></i><b>12.2</b> Prophet model</a></li>
+<li class="chapter" data-level="12.3" data-path="VAR.html"><a href="https://otexts.com/fpp3/VAR.html"><i class="fa fa-check"></i><b>12.3</b> Vector autoregressions</a></li>
+<li class="chapter" data-level="12.4" data-path="nnetar.html"><a href="https://otexts.com/fpp3/nnetar.html"><i class="fa fa-check"></i><b>12.4</b> Neural network models</a></li>
+<li class="chapter" data-level="12.5" data-path="bootstrap.html"><a href="https://otexts.com/fpp3/bootstrap.html"><i class="fa fa-check"></i><b>12.5</b> Bootstrapping and bagging</a></li>
+<li class="chapter" data-level="12.6" data-path="advanced-exercises.html"><a href="https://otexts.com/fpp3/advanced-exercises.html"><i class="fa fa-check"></i><b>12.6</b> Exercises</a></li>
+<li class="chapter" data-level="12.7" data-path="advanced-reading.html"><a href="https://otexts.com/fpp3/advanced-reading.html"><i class="fa fa-check"></i><b>12.7</b> Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="practical.html"><a href="https://otexts.com/fpp3/practical.html"><i class="fa fa-check"></i><b>13</b> Some practical forecasting issues</a>
+<ul style="display: none;">
+<li class="chapter" data-level="13.1" data-path="weekly.html"><a href="https://otexts.com/fpp3/weekly.html"><i class="fa fa-check"></i><b>13.1</b> Weekly, daily and sub-daily data</a></li>
+<li class="chapter" data-level="13.2" data-path="counts.html"><a href="https://otexts.com/fpp3/counts.html"><i class="fa fa-check"></i><b>13.2</b> Time series of counts</a></li>
+<li class="chapter" data-level="13.3" data-path="limits.html"><a href="https://otexts.com/fpp3/limits.html"><i class="fa fa-check"></i><b>13.3</b> Ensuring forecasts stay within limits</a></li>
+<li class="chapter" data-level="13.4" data-path="combinations.html"><a href="https://otexts.com/fpp3/combinations.html"><i class="fa fa-check"></i><b>13.4</b> Forecast combinations</a></li>
+<li class="chapter" data-level="13.5" data-path="aggregates.html"><a href="https://otexts.com/fpp3/aggregates.html"><i class="fa fa-check"></i><b>13.5</b> Prediction intervals for aggregates</a></li>
+<li class="chapter" data-level="13.6" data-path="backcasting.html"><a href="https://otexts.com/fpp3/backcasting.html"><i class="fa fa-check"></i><b>13.6</b> Backcasting</a></li>
+<li class="chapter" data-level="13.7" data-path="long-short-ts.html"><a href="https://otexts.com/fpp3/long-short-ts.html"><i class="fa fa-check"></i><b>13.7</b> Very long and very short time series</a></li>
+<li class="chapter" data-level="13.8" data-path="training-test.html"><a href="https://otexts.com/fpp3/training-test.html"><i class="fa fa-check"></i><b>13.8</b> Forecasting on training and test sets</a></li>
+<li class="chapter" data-level="13.9" data-path="missing-outliers.html"><a href="https://otexts.com/fpp3/missing-outliers.html"><i class="fa fa-check"></i><b>13.9</b> Dealing with outliers and missing values</a></li>
+<li class="chapter" data-level="13.10" data-path="further-reading-1.html"><a href="https://otexts.com/fpp3/further-reading-1.html"><i class="fa fa-check"></i><b>13.10</b> Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="appendix-using-r.html"><a href="https://otexts.com/fpp3/appendix-using-r.html"><i class="fa fa-check"></i>Appendix: Using R</a></li>
+<li class="chapter" data-level="" data-path="appendix-for-instructors.html"><a href="https://otexts.com/fpp3/appendix-for-instructors.html"><i class="fa fa-check"></i>Appendix: For instructors</a></li>
+<li class="chapter" data-level="" data-path="appendix-reviews.html"><a href="https://otexts.com/fpp3/appendix-reviews.html"><i class="fa fa-check"></i>Appendix: Reviews</a></li>
+<li class="chapter" data-level="" data-path="translations.html"><a href="https://otexts.com/fpp3/translations.html"><i class="fa fa-check"></i>Translations</a></li>
+<li class="chapter" data-level="" data-path="about-the-authors.html"><a href="https://otexts.com/fpp3/about-the-authors.html"><i class="fa fa-check"></i>About the authors</a></li>
+<li class="chapter" data-level="" data-path="buy-a-print-version.html"><a href="https://otexts.com/fpp3/buy-a-print-version.html"><i class="fa fa-check"></i>Buy a print version</a></li>
+<li class="chapter" data-level="" data-path="help-and-feedback.html"><a href="https://otexts.com/fpp3/help-and-feedback.html"><i class="fa fa-check"></i>Help and feedback</a></li>
+<li class="chapter" data-level="" data-path="changelog.html"><a href="https://otexts.com/fpp3/changelog.html"><i class="fa fa-check"></i>Changelog</a></li>
+<li class="chapter" data-level="" data-path="bibliography-1.html"><a href="https://otexts.com/fpp3/bibliography-1.html"><i class="fa fa-check"></i>Bibliography</a></li>
+<li class="divider"></li>
+<li><a href="https://otexts.com/" target="blank">Published by OTexts™ with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body fixed">
+      <div class="body-inner">
+        <div class="book-header fixed" role="navigation" style="background-color: rgb(255, 255, 255);">
+          <a class="btn pull-left js-toolbar-action" aria-label="Toggle Sidebar" title="Toggle Sidebar" href="https://otexts.com/fpp3/expsmooth-exercises.html#"><i class="fa fa-align-justify"></i></a><a class="btn pull-left js-toolbar-action" aria-label="Search" title="Search" href="https://otexts.com/fpp3/expsmooth-exercises.html#"><i class="fa fa-search"></i></a><div class="dropdown pull-right js-toolbar-action"><a class="btn toggle-dropdown" aria-label="Share" title="Share" href="https://otexts.com/fpp3/expsmooth-exercises.html#"><i class="fa fa-share-alt"></i></a><div class="dropdown-menu dropdown-left"><div class="dropdown-caret"><span class="caret-outer"></span><span class="caret-inner"></span></div><div class="buttons"><button class="button size-5 ">Facebook</button><button class="button size-5 ">Twitter</button><button class="button size-5 ">LinkedIn</button><button class="button size-5 ">Weibo</button><button class="button size-5 ">Instapaper</button></div></div></div><a class="btn pull-right js-toolbar-action" aria-label="Facebook" title="Facebook" href="https://otexts.com/fpp3/expsmooth-exercises.html#"><i class="fa fa-facebook"></i></a><a class="btn pull-right js-toolbar-action" aria-label="Twitter" title="Twitter" href="https://otexts.com/fpp3/expsmooth-exercises.html#"><i class="fa fa-twitter"></i></a><div class="dropdown pull-left font-settings js-toolbar-action"><a class="btn toggle-dropdown" aria-label="Font Settings" title="Font Settings" href="https://otexts.com/fpp3/expsmooth-exercises.html#"><i class="fa fa-font"></i></a><div class="dropdown-menu dropdown-right"><div class="dropdown-caret"><span class="caret-outer"></span><span class="caret-inner"></span></div><div class="buttons"><button class="button size-2 font-reduce">A</button><button class="button size-2 font-enlarge">A</button></div><div class="buttons"><button class="button size-2 ">Serif</button><button class="button size-2 ">Sans</button></div><div class="buttons"><button class="button size-3 ">White</button><button class="button size-3 ">Sepia</button><button class="button size-3 ">Night</button></div><div class="buttons"><button class="button size-2 spacing-reduce">Spacing -</button><button class="button size-2 ">Spacing +</button></div></div></div><a class="btn pull-left js-toolbar-action" aria-label="Information about the toolbar" title="Information about the toolbar" href="https://otexts.com/fpp3/expsmooth-exercises.html#"><i class="fa fa-info"></i></a><h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="https://otexts.com/fpp3/">Forecasting: Principles&nbsp;and&nbsp;Practice <font size="-1">(3rd&nbsp;ed)</font></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-" style="line-height: 1.7;">
+<div id="expsmooth-exercises" class="section level2" number="8.8">
+<h2 class="hasAnchor"><span class="header-section-number">8.8</span> Exercises<a href="https://otexts.com/fpp3/expsmooth-exercises.html#expsmooth-exercises" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ol style="list-style-type: decimal">
+<li><p>Consider the the number of pigs slaughtered in Victoria, available in the <code>aus_livestock</code> dataset.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Use the <code>ETS()</code> function to estimate the equivalent model for simple exponential smoothing. Find the optimal values of <span class="math inline"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-1-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03B1;&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="font-size: 125%; position: relative;"><span id="MJXc-Node-1" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-2" class="mjx-mrow"><span id="MJXc-Node-3" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.202em; padding-bottom: 0.302em;">α</span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>α</mi></math></span></span><script type="math/tex" id="MathJax-Element-1">\alpha</script></span> and <span class="math inline"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-2-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x2113;&lt;/mi&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;/msub&gt;&lt;/math&gt;" role="presentation" style="font-size: 125%; position: relative;"><span id="MJXc-Node-4" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-5" class="mjx-mrow"><span id="MJXc-Node-6" class="mjx-msubsup"><span class="mjx-base"><span id="MJXc-Node-7" class="mjx-mi"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">ℓ</span></span></span><span class="mjx-sub" style="font-size: 70.7%; vertical-align: -0.212em; padding-right: 0.071em;"><span id="MJXc-Node-8" class="mjx-mn" style=""><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">0</span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>ℓ</mi><mn>0</mn></msub></math></span></span><script type="math/tex" id="MathJax-Element-2">\ell_0</script></span>, and generate forecasts for the next four months.</li>
+<li>Compute a 95% prediction interval for the first forecast using <span class="math inline"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-3-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mover&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;&amp;#x005E;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;mo&gt;&amp;#x00B1;&lt;/mo&gt;&lt;mn&gt;1.96&lt;/mn&gt;&lt;mi&gt;s&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="font-size: 125%; position: relative;"><span id="MJXc-Node-9" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-10" class="mjx-mrow"><span id="MJXc-Node-11" class="mjx-texatom"><span id="MJXc-Node-12" class="mjx-mrow"><span id="MJXc-Node-13" class="mjx-munderover"><span class="mjx-stack"><span class="mjx-over" style="height: 0.213em; padding-bottom: 0.06em; padding-left: 0.083em;"><span id="MJXc-Node-15" class="mjx-mo" style="vertical-align: top;"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.302em;">^</span></span></span><span class="mjx-op"><span id="MJXc-Node-14" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.202em; padding-bottom: 0.503em; padding-right: 0.006em;">y</span></span></span></span></span></span></span><span id="MJXc-Node-16" class="mjx-mo MJXc-space2"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">±</span></span><span id="MJXc-Node-17" class="mjx-mn MJXc-space2"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">1.96</span></span><span id="MJXc-Node-18" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.202em; padding-bottom: 0.302em;">s</span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow class="MJX-TeXAtom-ORD"><mover><mi>y</mi><mo stretchy="false">^</mo></mover></mrow><mo>±</mo><mn>1.96</mn><mi>s</mi></math></span></span><script type="math/tex" id="MathJax-Element-3">\hat{y} \pm 1.96s</script></span> where <span class="math inline"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-4-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;s&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="font-size: 125%; position: relative;"><span id="MJXc-Node-19" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-20" class="mjx-mrow"><span id="MJXc-Node-21" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.202em; padding-bottom: 0.302em;">s</span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>s</mi></math></span></span><script type="math/tex" id="MathJax-Element-4">s</script></span> is the standard deviation of the residuals. Compare your interval with the interval produced by R.</li>
+</ol></li>
+<li><p>Write your own function to implement simple exponential smoothing. The function should take arguments <code>y</code> (the time series), <code>alpha</code> (the smoothing parameter <span class="math inline"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-5-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03B1;&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="font-size: 125%; position: relative;"><span id="MJXc-Node-22" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-23" class="mjx-mrow"><span id="MJXc-Node-24" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.202em; padding-bottom: 0.302em;">α</span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>α</mi></math></span></span><script type="math/tex" id="MathJax-Element-5">\alpha</script></span>) and <code>level</code> (the initial level <span class="math inline"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-6-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x2113;&lt;/mi&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;/msub&gt;&lt;/math&gt;" role="presentation" style="font-size: 125%; position: relative;"><span id="MJXc-Node-25" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-26" class="mjx-mrow"><span id="MJXc-Node-27" class="mjx-msubsup"><span class="mjx-base"><span id="MJXc-Node-28" class="mjx-mi"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">ℓ</span></span></span><span class="mjx-sub" style="font-size: 70.7%; vertical-align: -0.212em; padding-right: 0.071em;"><span id="MJXc-Node-29" class="mjx-mn" style=""><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">0</span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>ℓ</mi><mn>0</mn></msub></math></span></span><script type="math/tex" id="MathJax-Element-6">\ell_0</script></span>). It should return the forecast of the next observation in the series. Does it give the same forecast as <code>ETS()</code>?</p></li>
+<li><p>Modify your function from the previous exercise to return the sum of squared errors rather than the forecast of the next observation. Then use the <code>optim()</code> function to find the optimal values of <span class="math inline"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-7-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03B1;&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="font-size: 125%; position: relative;"><span id="MJXc-Node-30" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-31" class="mjx-mrow"><span id="MJXc-Node-32" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.202em; padding-bottom: 0.302em;">α</span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>α</mi></math></span></span><script type="math/tex" id="MathJax-Element-7">\alpha</script></span> and <span class="math inline"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-8-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x2113;&lt;/mi&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;/msub&gt;&lt;/math&gt;" role="presentation" style="font-size: 125%; position: relative;"><span id="MJXc-Node-33" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-34" class="mjx-mrow"><span id="MJXc-Node-35" class="mjx-msubsup"><span class="mjx-base"><span id="MJXc-Node-36" class="mjx-mi"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">ℓ</span></span></span><span class="mjx-sub" style="font-size: 70.7%; vertical-align: -0.212em; padding-right: 0.071em;"><span id="MJXc-Node-37" class="mjx-mn" style=""><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">0</span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>ℓ</mi><mn>0</mn></msub></math></span></span><script type="math/tex" id="MathJax-Element-8">\ell_0</script></span>. Do you get the same values as the <code>ETS()</code> function?</p></li>
+<li><p>Combine your previous two functions to produce a function that both finds the optimal values of <span class="math inline"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-9-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03B1;&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="font-size: 125%; position: relative;"><span id="MJXc-Node-38" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-39" class="mjx-mrow"><span id="MJXc-Node-40" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.202em; padding-bottom: 0.302em;">α</span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>α</mi></math></span></span><script type="math/tex" id="MathJax-Element-9">\alpha</script></span> and <span class="math inline"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-10-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x2113;&lt;/mi&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;/msub&gt;&lt;/math&gt;" role="presentation" style="font-size: 125%; position: relative;"><span id="MJXc-Node-41" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-42" class="mjx-mrow"><span id="MJXc-Node-43" class="mjx-msubsup"><span class="mjx-base"><span id="MJXc-Node-44" class="mjx-mi"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">ℓ</span></span></span><span class="mjx-sub" style="font-size: 70.7%; vertical-align: -0.212em; padding-right: 0.071em;"><span id="MJXc-Node-45" class="mjx-mn" style=""><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">0</span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>ℓ</mi><mn>0</mn></msub></math></span></span><script type="math/tex" id="MathJax-Element-10">\ell_0</script></span>, and produces a forecast of the next observation in the series.</p></li>
+<li><p>Data set <code>global_economy</code> contains the annual Exports from many countries. Select one country to analyse.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Plot the Exports series and discuss the main features of the data.</li>
+<li>Use an ETS(A,N,N) model to forecast the series, and plot the forecasts.</li>
+<li>Compute the RMSE values for the training data.</li>
+<li>Compare the results to those from an ETS(A,A,N) model. (Remember that the trended model is using one more parameter than the simpler model.) Discuss the merits of the two forecasting methods for this data set.</li>
+<li>Compare the forecasts from both methods. Which do you think is best?</li>
+<li>Calculate a 95% prediction interval for the first forecast for each model, using the RMSE values and assuming normal errors. Compare your intervals with those produced using R.</li>
+</ol></li>
+<li><p>Forecast the Chinese GDP from the <code>global_economy</code> data set using an ETS model. Experiment with the various options in the <code>ETS()</code> function to see how much the forecasts change with damped trend, or with a Box-Cox transformation. Try to develop an intuition of what each is doing to the forecasts.</p>
+<p>[Hint: use a relatively large value of <code>h</code> when forecasting, so you can clearly see the differences between the various options when plotting the forecasts.]</p></li>
+<li><p>Find an ETS model for the Gas data from <code>aus_production</code> and forecast the next few years. Why is multiplicative seasonality necessary here? Experiment with making the trend damped. Does it improve the forecasts?</p></li>
+<li><p>Recall your retail time series data (from Exercise 7 in Section <a href="https://otexts.com/fpp3/graphics-exercises.html#graphics-exercises">2.10</a>).</p>
+<ol style="list-style-type: lower-alpha">
+<li>Why is multiplicative seasonality necessary for this series?</li>
+<li>Apply Holt-Winters’ multiplicative method to the data. Experiment with making the trend damped.</li>
+<li>Compare the RMSE of the one-step forecasts from the two methods. Which do you prefer?</li>
+<li>Check that the residuals from the best method look like white noise.</li>
+<li>Now find the test set RMSE, while training the model to the end of 2010. Can you beat the seasonal naïve approach from Exercise 7 in Section <a href="https://otexts.com/fpp3/toolbox-exercises.html#toolbox-exercises">5.11</a>?</li>
+</ol></li>
+<li><p>For the same retail data, try an STL decomposition applied to the Box-Cox transformed series, followed by ETS on the seasonally adjusted data. How does that compare with your best previous forecasts on the test set?</p></li>
+<li><p>Compute the total domestic overnight trips across Australia from the <code>tourism</code> dataset.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Plot the data and describe the main features of the series.</li>
+<li>Decompose the series using STL and obtain the seasonally adjusted data.</li>
+<li>Forecast the next two years of the series using an additive damped trend method applied to the seasonally adjusted data. (This can be specified using <code>decomposition_model()</code>.)</li>
+<li>Forecast the next two years of the series using an appropriate model for Holt’s linear method applied to the seasonally adjusted data (as before but without damped trend).</li>
+<li>Now use <code>ETS()</code> to choose a seasonal model for the data.</li>
+<li>Compare the RMSE of the ETS model with the RMSE of the models you obtained using STL decompositions. Which gives the better in-sample fits?</li>
+<li>Compare the forecasts from the three approaches? Which seems most reasonable?</li>
+<li>Check the residuals of your preferred model.</li>
+</ol></li>
+<li><p>For this exercise use the quarterly number of arrivals to Australia from New Zealand, 1981 Q1 – 2012 Q3, from data set <code>aus_arrivals</code>.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Make a time plot of your data and describe the main features of the series.</li>
+<li>Create a training set that withholds the last two years of available data. Forecast the test set using an appropriate model for Holt-Winters’ multiplicative method.</li>
+<li>Why is multiplicative seasonality necessary here?</li>
+<li>Forecast the two-year test set using each of the following methods:
+<ul>
+<li>an ETS model;</li>
+<li>an additive ETS model applied to a log transformed series;</li>
+<li>a seasonal naïve method;</li>
+<li>an STL decomposition applied to the log transformed data followed by an ETS model applied to the seasonally adjusted (transformed) data.</li>
+</ul></li>
+<li>Which method gives the best forecasts? Does it pass the residual tests?</li>
+<li>Compare the same four methods using time series cross-validation instead of using a training and test set. Do you come to the same conclusions?</li>
+</ol></li>
+<li><ol style="list-style-type: lower-alpha">
+<li>Apply cross-validation techniques to produce 1 year ahead ETS and seasonal naïve forecasts for Portland cement production (from <code>aus_production</code>). Use a stretching data window with initial size of 5 years, and increment the window by one observation.</li>
+<li>Compute the MSE of the resulting <span class="math inline"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-11-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mn&gt;4&lt;/mn&gt;&lt;/math&gt;" role="presentation" style="font-size: 125%; position: relative;"><span id="MJXc-Node-46" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-47" class="mjx-mrow"><span id="MJXc-Node-48" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">4</span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mn>4</mn></math></span></span><script type="math/tex" id="MathJax-Element-11">4</script></span>-step-ahead errors. Comment on which forecasts are more accurate. Is this what you expected?</li>
+</ol></li>
+<li><p>Compare <code>ETS()</code>, <code>SNAIVE()</code> and <code>decomposition_model(STL, ???)</code> on the following five time series. You might need to use a Box-Cox transformation for the STL decomposition forecasts. Use a test set of three years to decide what gives the best forecasts.</p>
+<ul>
+<li>Beer and bricks production from <code>aus_production</code>.</li>
+<li>Cost of drug subsidies for diabetes (<code>ATC2 == "A10"</code>) and corticosteroids (<code>ATC2 == "H02"</code>) from <code>PBS</code>.</li>
+<li>Total food retailing turnover for Australia from <code>aus_retail</code>.</li>
+</ul></li>
+<li><ol style="list-style-type: lower-alpha">
+<li><p>Use <code>ETS()</code> to select an appropriate model for the following series: total number of trips across Australia using <code>tourism</code>, the closing prices for the four stocks in <code>gafa_stock</code>, and the lynx series in <code>pelt</code>. Does it always give good forecasts?</p></li>
+<li><p>Find an example where it does not work well. Can you figure out why?</p></li>
+</ol></li>
+<li><p>Show that the point forecasts from an ETS(M,A,M) model are the same as those obtained using Holt-Winters’ multiplicative method.</p></li>
+<li><p>Show that the forecast variance for an ETS(A,N,N) model is given by
+<span class="math display"><span class="MathJax_Preview" style="color: inherit;"></span><span class="mjx-chtml MJXc-display" style="text-align: center;"><span id="MathJax-Element-12-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" style="font-size: 125%; text-align: center; position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;msup&gt;&lt;mi&gt;&amp;#x03C3;&lt;/mi&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;mrow&gt;&lt;mo&gt;[&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;msup&gt;&lt;mi&gt;&amp;#x03B1;&lt;/mi&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;h&lt;/mi&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo&gt;]&lt;/mo&gt;&lt;/mrow&gt;&lt;mo&gt;.&lt;/mo&gt;&lt;/math&gt;" role="presentation"><span id="MJXc-Node-49" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-50" class="mjx-mrow"><span id="MJXc-Node-51" class="mjx-msubsup"><span class="mjx-base" style="margin-right: -0.001em;"><span id="MJXc-Node-52" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.202em; padding-bottom: 0.302em; padding-right: 0.001em;">σ</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.584em; padding-left: 0.073em; padding-right: 0.071em;"><span id="MJXc-Node-53" class="mjx-mn" style=""><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">2</span></span></span></span><span id="MJXc-Node-54" class="mjx-mrow MJXc-space1"><span id="MJXc-Node-55" class="mjx-mo"><span class="mjx-char MJXc-TeX-size1-R" style="padding-top: 0.653em; padding-bottom: 0.603em;">[</span></span><span id="MJXc-Node-56" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">1</span></span><span id="MJXc-Node-57" class="mjx-mo MJXc-space2"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.302em; padding-bottom: 0.403em;">+</span></span><span id="MJXc-Node-58" class="mjx-msubsup MJXc-space2"><span class="mjx-base"><span id="MJXc-Node-59" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.202em; padding-bottom: 0.302em;">α</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.584em; padding-left: 0px; padding-right: 0.071em;"><span id="MJXc-Node-60" class="mjx-mn" style=""><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">2</span></span></span></span><span id="MJXc-Node-61" class="mjx-mo"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.453em; padding-bottom: 0.603em;">(</span></span><span id="MJXc-Node-62" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.453em; padding-bottom: 0.302em;">h</span></span><span id="MJXc-Node-63" class="mjx-mo MJXc-space2"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.302em; padding-bottom: 0.403em;">−</span></span><span id="MJXc-Node-64" class="mjx-mn MJXc-space2"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">1</span></span><span id="MJXc-Node-65" class="mjx-mo"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.453em; padding-bottom: 0.603em;">)</span></span><span id="MJXc-Node-66" class="mjx-mo"><span class="mjx-char MJXc-TeX-size1-R" style="padding-top: 0.653em; padding-bottom: 0.603em;">]</span></span></span><span id="MJXc-Node-67" class="mjx-mo MJXc-space1"><span class="mjx-char MJXc-TeX-main-R" style="margin-top: -0.148em; padding-bottom: 0.352em;">.</span></span></span></span><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><msup><mi>σ</mi><mn>2</mn></msup><mrow><mo>[</mo><mn>1</mn><mo>+</mo><msup><mi>α</mi><mn>2</mn></msup><mo stretchy="false">(</mo><mi>h</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo><mo>]</mo></mrow><mo>.</mo></math></span></span></span><script type="math/tex; mode=display" id="MathJax-Element-12">
+\sigma^2\left[1+\alpha^2(h-1)\right].
+</script></span></p></li>
+<li><p>Write down 95% prediction intervals for an ETS(A,N,N) model as a function of <span class="math inline"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-13-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x2113;&lt;/mi&gt;&lt;mi&gt;T&lt;/mi&gt;&lt;/msub&gt;&lt;/math&gt;" role="presentation" style="font-size: 125%; position: relative;"><span id="MJXc-Node-68" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-69" class="mjx-mrow"><span id="MJXc-Node-70" class="mjx-msubsup"><span class="mjx-base"><span id="MJXc-Node-71" class="mjx-mi"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.403em; padding-bottom: 0.352em;">ℓ</span></span></span><span class="mjx-sub" style="font-size: 70.7%; vertical-align: -0.212em; padding-right: 0.071em;"><span id="MJXc-Node-72" class="mjx-mi" style=""><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.453em; padding-bottom: 0.302em; padding-right: 0.12em;">T</span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>ℓ</mi><mi>T</mi></msub></math></span></span><script type="math/tex" id="MathJax-Element-13">\ell_T</script></span>, <span class="math inline"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-14-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03B1;&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="font-size: 125%; position: relative;"><span id="MJXc-Node-73" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-74" class="mjx-mrow"><span id="MJXc-Node-75" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.202em; padding-bottom: 0.302em;">α</span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>α</mi></math></span></span><script type="math/tex" id="MathJax-Element-14">\alpha</script></span>, <span class="math inline"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-15-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;h&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="font-size: 125%; position: relative;"><span id="MJXc-Node-76" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-77" class="mjx-mrow"><span id="MJXc-Node-78" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.453em; padding-bottom: 0.302em;">h</span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>h</mi></math></span></span><script type="math/tex" id="MathJax-Element-15">h</script></span> and <span class="math inline"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-16-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03C3;&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="font-size: 125%; position: relative;"><span id="MJXc-Node-79" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-80" class="mjx-mrow"><span id="MJXc-Node-81" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.202em; padding-bottom: 0.302em; padding-right: 0.001em;">σ</span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>σ</mi></math></span></span><script type="math/tex" id="MathJax-Element-16">\sigma</script></span>, assuming normally distributed errors.</p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="https://otexts.com/fpp3/ets-forecasting.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="https://otexts.com/fpp3/expsmooth-reading.html" class="navigation navigation-next " aria-label="Next page" style="margin-right: 15px;"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/app.min.js"></script>
+<script src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/clipboard.min.js"></script>
+<script src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/plugin-search.js"></script>
+<script src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/plugin-sharing.js"></script>
+<script src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/plugin-fontsettings.js"></script>
+<script src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/plugin-bookdown.js"></script>
+<script src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/jquery.highlight.js"></script>
+<script src="./8.8 Exercises _ Forecasting_ Principles and Practice (3rd ed)_files/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "section"
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+
+
+</body></html>

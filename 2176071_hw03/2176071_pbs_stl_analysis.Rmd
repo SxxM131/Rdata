@@ -1,0 +1,243 @@
+---
+title: "PBS & Tourism STL Analysis"
+author: "2176071 김수민"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{fontspec}
+  - \setmainfont{AppleGothic}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## 라이브러리 로드
+
+```{r libraries}
+library(fpp3)
+library(tsibbledata)
+library(dplyr)
+library(GGally)
+```
+
+---
+
+## Question 1: PBS — Mean & Standard Deviation
+
+### 1-1. 함수 정의
+
+`PBS`에는 `ATC1 × ATC2 × Concession × Type` 조합으로 336개의 개별 시계열이 존재합니다.
+단순히 `group_by(ATC2)`로 집계하면 여러 시계열을 뭉개버리므로, `fpp3`의 `features()`를
+사용하여 336개 각각의 시계열에 함수를 독립적으로 적용합니다.
+
+```{r function}
+# 단일 시계열 벡터를 입력받아 평균과 표준편차를 반환하는 함수
+ts_summary <- function(x) {
+  c(mean = mean(x, na.rm = TRUE),
+    sd   = sd(x,   na.rm = TRUE))
+}
+```
+
+### 1-2. PBS 데이터에 함수 적용
+
+```{r apply}
+# features()가 336개 개별 시계열 각각에 ts_summary를 적용
+stats <- PBS |>
+  features(Cost, ts_summary)
+
+stats |>
+  arrange(desc(mean)) |>
+  head(5)
+```
+
+가장 높은 평균과 가장 낮은 표준편차를 가진 시리즈를 추출합니다.
+
+```{r identify}
+highest_mean <- stats |> slice_max(mean, n = 1)
+lowest_sd    <- stats |> slice_min(sd,   n = 1)
+
+cat("Highest mean — ATC2:", highest_mean$ATC2,
+    "| Concession:", highest_mean$Concession,
+    "| Type:", highest_mean$Type, "\n")
+cat("Lowest SD    — ATC2:", lowest_sd$ATC2,
+    "| Concession:", lowest_sd$Concession,
+    "| Type:", lowest_sd$Type, "\n")
+```
+
+### 1-3. 시각화
+
+**가장 높은 평균을 가진 시리즈**
+
+```{r plot_highest_mean, fig.width=9, fig.height=4}
+PBS |>
+  semi_join(highest_mean, by = c("ATC1", "ATC2", "Concession", "Type")) |>
+  autoplot(Cost) +
+  labs(
+    title = paste("Highest Mean Cost — ATC2:", highest_mean$ATC2,
+                  "(", highest_mean$Concession, "/", highest_mean$Type, ")"),
+    x = "Month", y = "Cost (AUD)"
+  )
+```
+
+**가장 낮은 표준편차를 가진 시리즈**
+
+```{r plot_lowest_sd, fig.width=9, fig.height=4}
+PBS |>
+  semi_join(lowest_sd, by = c("ATC1", "ATC2", "Concession", "Type")) |>
+  autoplot(Cost) +
+  labs(
+    title = paste("Lowest SD — ATC2:", lowest_sd$ATC2,
+                  "(", lowest_sd$Concession, "/", lowest_sd$Type, ")"),
+    x = "Month", y = "Cost (AUD)"
+  )
+```
+
+### 1-4. 요약 테이블
+
+```{r summary_table}
+bind_rows(
+  highest_mean |> mutate(note = "Highest Mean"),
+  lowest_sd    |> mutate(note = "Lowest SD")
+) |>
+  mutate(mean = round(mean, 0), sd = round(sd, 0)) |>
+  select(note, ATC1, ATC2, Concession, Type, mean, sd) |>
+  knitr::kable(
+    col.names = c("Note", "ATC1", "ATC2", "Concession", "Type", "Mean Cost", "Std Dev"),
+    format.args = list(big.mark = ",")
+  )
+```
+
+---
+
+## Question 2: Tourism — STL Features with `ggpairs()`
+
+`tourism` 데이터에서 Holiday 시리즈만 추출하고, `seasonal_peak_year`와
+`seasonal_trough_year`를 factor로 변환한 뒤 STL 피처 간의 관계를 `ggpairs()`로 살펴봅니다.
+
+```{r stl_features, fig.width=12, fig.height=10}
+holiday_features <- tourism |>
+  features(Trips, feat_stl) |>
+  filter(Purpose == "Holiday") |>
+  mutate(
+    seasonal_peak_year   = factor(seasonal_peak_year),
+    seasonal_trough_year = factor(seasonal_trough_year)
+  )
+
+ggpairs(
+  holiday_features,
+  columns = c("trend_strength", "seasonal_strength_year",
+              "seasonal_peak_year", "seasonal_trough_year",
+              "spikiness", "linearity", "curvature",
+              "stl_e_acf1", "stl_e_acf10"),
+  aes(colour = seasonal_peak_year)
+) +
+  labs(title = "STL Features for Holiday Tourism Series")
+```
+
+### 주별 Peak Quarter
+
+```{r peak_quarter}
+tourism |>
+  features(Trips, feat_stl) |>
+  filter(Purpose == "Holiday") |>
+  mutate(seasonal_peak_year = factor(seasonal_peak_year)) |>
+  select(State, Region, seasonal_peak_year) |>
+  group_by(State, seasonal_peak_year) |>
+  summarise(n = n(), .groups = "drop") |>
+  group_by(State) |>
+  slice_max(n, n = 1) |>
+  select(State, Peak_Quarter = seasonal_peak_year) |>
+  knitr::kable(col.names = c("State", "Peak Quarter (most common)"))
+```
+
+**해석:** 대부분의 주(Queensland, Victoria, South Australia, Western Australia, Tasmania, ACT)는
+**Q1(여름)**이 피크 분기입니다. 반면 New South Wales와 Northern Territory는
+**Q3(겨울)**이 피크로, 각각 스키 여행(Snowy Mountains)과 건기 여행 수요를 반영합니다.
+
+---
+
+## Question 3: PBS — Feature-based Outlier Detection
+
+피처 기반 접근법으로 `PBS` 데이터에서 이상치 시리즈를 탐색합니다.
+STL 및 ACF 피처를 추출한 뒤 PCA를 적용하여 PC1/PC2 평면에서 극단적으로 떨어진 시리즈를 이상치로 식별합니다.
+
+### 3-1. 피처 추출 및 PCA
+
+```{r pbs_features}
+library(broom)
+
+pbs_features <- PBS |>
+  features(Cost, list(feat_stl, feat_acf))
+
+# 분산이 0이거나 희귀 시리즈에서 NA가 발생하므로 PCA 전에 반드시 제거
+pbs_features_clean <- pbs_features |>
+  drop_na()
+
+pbs_prcomp <- pbs_features_clean |>
+  select(where(is.numeric)) |>
+  prcomp(scale = TRUE)
+
+# augment 시 기준 데이터프레임 행 수를 clean 버전과 맞춰야 함
+pbs_pca <- pbs_prcomp |>
+  augment(pbs_features_clean)
+```
+
+### 3-2. PC1/PC2 산점도 — 이상치 시각화
+
+```{r pbs_pca_plot, fig.width=8, fig.height=6}
+pbs_pca |>
+  ggplot(aes(.fittedPC1, .fittedPC2)) +
+  geom_point(alpha = 0.6) +
+  labs(
+    title = "PCA of PBS features",
+    x     = "PC1",
+    y     = "PC2"
+  )
+```
+
+### 3-3. 이상치 시리즈 추출
+
+PC1과 PC2에서 각각 상·하위 1% 극단값에 해당하는 시리즈를 이상치로 정의합니다.
+
+```{r pbs_outliers}
+outliers <- pbs_pca |>
+  filter(
+    .fittedPC1 > quantile(.fittedPC1, 0.99) |
+    .fittedPC1 < quantile(.fittedPC1, 0.01) |
+    .fittedPC2 > quantile(.fittedPC2, 0.99)
+  ) |>
+  select(ATC1, ATC2, Concession, Type,
+         .fittedPC1, .fittedPC2)
+
+outliers |>
+  knitr::kable(
+    digits = 2,
+    col.names = c("ATC1", "ATC2", "Concession", "Type", "PC1", "PC2")
+  )
+```
+
+### 3-4. 이상치 시리즈 플롯
+
+```{r pbs_outlier_plot, fig.width=11, fig.height=6}
+PBS |>
+  semi_join(outliers, by = c("ATC1", "ATC2", "Concession", "Type")) |>
+  ggplot(aes(x = Month, y = Cost,
+             colour = interaction(Concession, Type))) +
+  geom_line() +
+  facet_wrap(vars(ATC1, ATC2), scales = "free_y") +
+  labs(
+    title  = "Outlying PBS series",
+    colour = "Concession × Type"
+  )
+```
+
+### 3-5. 해석
+
+이상치로 식별된 시리즈들의 특징은 다음과 같습니다.
+
+- **PC1 극단값 (양의 방향):** `trend_strength`와 `acf` 관련 피처가 매우 높은 시리즈로, 장기적으로 급격히 증가하는 강한 트렌드를 보입니다. 주로 당뇨·심혈관계 약품군(A10, C 계열)으로, 고령화와 만성질환 증가로 처방량이 지속적으로 늘어난 결과입니다.
+- **PC1 극단값 (음의 방향):** 거의 모든 기간에 Cost가 0에 가깝다가 특정 시점 이후 갑자기 큰 값이 등장하는 희귀 약품군입니다. 대부분의 STL 피처가 정상 범위를 벗어납니다.
+- **PC2 극단값:** `spikiness`(잔차 분산)가 극도로 높아, 정책 변화나 약가 개편 등의 외부 충격에 의한 불규칙한 스파이크가 반복적으로 나타나는 시리즈입니다.

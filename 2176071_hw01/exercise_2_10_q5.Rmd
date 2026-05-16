@@ -1,0 +1,79 @@
+---
+title: "Forecasting: Principles and Practice - Chapter 2 Exercises"
+subtitle: "2.10 Exercise 5"
+author: "2176071KimSooMin"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: false
+    number_sections: false
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{fontspec}
+  - \setmainfont{AppleGothic}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo    = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width  = 7,
+  fig.height = 4
+)
+```
+
+```{r load-packages}
+library(fpp3)
+library(readxl)
+```
+
+## a. Excel 데이터 읽기
+
+```{r read-excel}
+tourism_raw <- read_excel("tourism.xlsx")
+```
+
+## b. tsibble 데이터로 변환
+
+```{r convert-tsibble}
+my_tourism <- tourism_raw |>
+  mutate(Quarter = yearquarter(Quarter)) |>
+  as_tsibble(index = Quarter, key = c(Region, State, Purpose))
+
+# 내장 데이터셋(tourism)과 동일한지 확인
+all.equal(my_tourism, tourism)
+# tourism: tsibble 패키지에 내장된 기준 데이터셋
+# all.equal(): 두 객체가 동일한지 비교 — TRUE면 완전 일치
+```
+
+## c. 가장 방문객이 많았던 Region과 Purpose 조합
+
+```{r max-trips}
+my_tourism |>
+  group_by(Region, Purpose) |>
+  summarise(avg_trips = mean(Trips), .groups = "drop") |>
+  arrange(desc(avg_trips)) |>
+  slice(1)
+```
+가장 여행객 방문 횟수 평균이 높은 조합은 Sydney 지역의 Visiting(지인 방문) 목적이다.
+
+## d. State 단위 통합 tsibble 생성 및 시각화
+
+```{r state-tourism, fig.height=6}
+state_tourism <- my_tourism |>
+  as_tibble() |>
+  # as_tibble(): 일반 data frame으로 변환 후 group_by/summarise 사용.
+  # tsibble 상태에서는 index 열을 group_by에 쓸 수 없기 때문.
+  group_by(State, Quarter) |>
+  summarise(Trips = sum(Trips), .groups = "drop") |>
+  as_tsibble(index = Quarter, key = State)
+
+state_tourism |>
+  autoplot(Trips) +
+  labs(
+    title = "Total Trips by State",
+    x = "Quarter",
+    y = "Trips"
+  )
+```

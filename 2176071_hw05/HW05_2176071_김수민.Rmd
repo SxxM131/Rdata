@@ -1,0 +1,333 @@
+---
+title: "Chapter 7 연습문제 과제"
+author: "김수민"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{fontspec}
+  - \setmainfont{AppleGothic}
+  - \usepackage{geometry}
+  - \geometry{margin=2.5cm}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  fig.align = "center",
+  dev = "pdf"
+)
+
+library(fpp3)
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+library(showtext)
+showtext_auto()
+font_add("AppleGothic", "/System/Library/Fonts/Supplemental/AppleGothic.ttf")
+```
+
+# 연습문제 2: 올림픽 육상 우승 기록 (`olympic_running`)
+
+> `olympic_running` 데이터셋은 1896년부터 2016년까지 개최된 올림픽 육상 종목(단거리, 중거리, 장거리)의 우승 기록(초 단위)을 담고 있습니다. 
+> 본 연습문제에서는 연도에 따른 우승 기록의 전반적인 추이를 시각화하여 확인하고, 회귀직선을 적합하여 매년 평균적으로 기록이 얼마나 단축되었는지를 분석합니다. 
+> 또한 잔차 플롯을 통해 단순 선형 추세 모형이 기록 변화를 설명하기에 충분한지 평가하며, 이를 바탕으로 2020년 올림픽의 예측치와 예측 과정에서 적용된 가정의 한계점을 다룹니다.
+
+### (a) 종목별 우승 기록 추이 시각화
+
+각 종목별 우승 기록과 연도의 관계를 시각화하고 주요 특징을 파악합니다.
+
+```{r ex2-a, fig.height=5}
+olympic_running |>
+  ggplot(aes(x = Year, y = Time, colour = Sex)) +
+  geom_point(alpha = 0.7) +
+  geom_line(alpha = 0.5) +
+  facet_wrap(~Length, scales = "free_y", nrow = 2) +
+  labs(title = "올림픽 육상 종목별 우승 기록 추이", x = "연도", y = "우승 기록(초)") +
+  theme_bw(base_family = "AppleGothic")
+```
+
+**💡 시각화 해석:**
+
+* **전반적인 하락세:** 모든 종목에서 시간이 지날수록 우승 기록이 단축되는 뚜렷한 추세를 보입니다.
+* **성별 차이 및 데이터 공백:** 남성의 기록이 여성보다 일관되게 짧습니다. 또한 여성 장거리 종목은 상대적으로 늦게 올림픽에 도입되어 초기 데이터가 없습니다.
+* **결측치:** 1차, 2차 세계대전이 있었던 시기에는 올림픽이 개최되지 않아 중간에 데이터가 비어 있습니다.
+
+### (b) 회귀직선 적합 및 연간 평균 감소율
+
+종목별로 선형 회귀직선을 적합하여 매년 우승 기록이 평균적으로 얼마나 감소하는지 확인합니다.
+
+```{r ex2-b}
+fit_olympic <- olympic_running |>
+  model(trend = TSLM(Time ~ trend()))
+
+tidy(fit_olympic) |>
+  filter(term == "trend()") |>
+  select(Length, Sex, estimate) |>
+  knitr::kable(digits = 4, caption = "종목별 연간 평균 감소율(초/년)")
+```
+
+**💡 해석:**
+
+`trend()`의 추정값(estimate)은 대부분 음수로, 전반적으로 매년 우승 기록이 단축되는 추세를 보입니다. 다만 여자 1500m의 경우 예외적으로 양수(+0.5870)가 나왔는데, 이는 `trend()`가 실제 연도(Year)가 아니라 관측 인덱스(1, 2, 3...)를 기준으로 회귀하기 때문입니다. 여자 1500m는 올림픽에 비교적 늦게 도입되어 관측된 데이터 수가 매우 적기 때문에, 소수의 데이터 포인트에 회귀선을 적합하는 과정에서 우연히 양의 기울기가 추정된 결과라고 보는 것이 자연스럽습니다. 남자 100m 종목의 경우 1년에 평균적으로 약 0.05초씩 기록이 단축되는 추세입니다.
+
+### (c) 잔차 플롯을 통한 적합성 판단
+
+회귀직선의 잔차를 연도별로 시각화하여 선형 모델이 적합한지 판단합니다.
+
+```{r ex2-c, fig.height=5}
+augment(fit_olympic) |>
+  ggplot(aes(x = Year, y = .resid, colour = Sex)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "gray50") +
+  facet_wrap(~Length, scales = "free_y", nrow = 2) +
+  labs(title = "연도별 회귀 잔차 플롯", x = "연도", y = "잔차") +
+  theme_bw(base_family = "AppleGothic")
+```
+
+**💡 해석:**
+
+특히 800m 종목의 잔차 플롯을 보면, 잔차가 0을 중심으로 무작위로 분포하지 않고 뚜렷한 U자 형태의 패턴(초기 양수 $\rightarrow$ 중간 음수 $\rightarrow$ 최근 양수)을 보입니다. 장거리(5000m, 10000m) 종목도 잔차가 무작위하지 않고 구조적 패턴이 남아있어, 단순 선형 추세 모델만으로는 데이터의 비선형적 변화를 완벽히 설명할 수 없음을 의미합니다.
+
+### (d) 2020 올림픽 예측 및 가정사항
+
+적합된 모델을 사용하여 2020년 올림픽 각 종목의 우승 기록을 예측합니다.
+
+```{r ex2-d}
+# 2020년 데이터를 직접 생성
+new_2020 <- expand.grid(
+  Length = unique(olympic_running$Length),
+  Sex = unique(olympic_running$Sex)
+) |>
+  mutate(Year = 2020) |>
+  as_tsibble(index = Year, key = c(Length, Sex))
+
+fc_olympic <- fit_olympic |>
+  forecast(new_data = new_2020)
+
+fc_olympic |>
+  hilo(level = 95) |>
+  unpack_hilo("95%") |>
+  select(Length, Sex, .mean, `95%_lower`, `95%_upper`) |>
+  knitr::kable(digits = 2, caption = "2020년 올림픽 우승 기록 예측치 및 95% 신뢰구간")
+```
+
+**💡 예측 결과 해석 (NaN 발생 원인) 및 가정의 한계:**
+
+표를 보면 2020년 예측값이 모두 `NaN`으로 나온 것을 확인할 수 있습니다. 예측값이 `NaN`이 된 결정적 이유는 `new_2020` 데이터를 임의로 생성할 때 모델이 기대하는 각 그룹(Length, Sex)별 시계열의 "연속성"이 끊어졌기 때문입니다. `TSLM(Time ~ trend())`에서 `trend()`는 단순 연도가 아닌 관측 순서를 기반으로 증가하는데, `expand.grid`와 `as_tsibble`을 써서 데이터를 새로 만들면 이것이 기존 시계열의 "다음 시점"으로 이어지는 것이 아니라 완전히 새로운 시계열로 인식되어 버립니다. 기존 데이터의 흐름과 단절되었기 때문에 `forecast()`가 다음 `trend()` 값을 계산하지 못하고 `NaN`을 반환한 것입니다.
+
+또한, 이 예측은 과거의 선형적인 기록 감소 추세가 2020년까지도 그대로 이어질 것이라는 가정을 바탕으로 합니다. 하지만 실제로는 인간의 육체적 한계가 존재하기 때문에 영원히 일정한 속도로 기록이 단축될 수는 없으며, 모델이 단순 선형 추세를 기계적으로 연장함으로써 일부 종목에서 현실과 동떨어진 비현실적인 예측 구간을 도출하게 되는 한계가 있습니다.
+
+
+# 연습문제 4: 기념품 가게 월별 매출 (`souvenirs`)
+
+> `souvenirs` 데이터셋은 1987년 1월 호주 퀸즐랜드의 한 해변 휴양지에서 개업한 기념품 가게의 월별 매출 자료를 담고 있습니다. 
+> 이 가게의 매출은 관광객 수에 크게 좌우되며, 특히 크리스마스 시즌(12월)과 1988년부터 3월마다 열리는 로컬 서핑 축제 기간에 급증하는 특징이 있습니다. 
+> 본 연습문제에서는 데이터에 나타나는 곱셈적 계절성을 해결하기 위한 로그 변환의 필요성을 논의하고, 계절 더미 변수와 이벤트 더미 변수를 포함한 다중 선형 회귀 모형을 구축하여 예측 성능을 평가합니다.
+
+### (a) 시계열 플롯 및 변동 패턴 분석
+
+매출 데이터를 시각화하고 그래프에서 나타나는 주요 패턴과 특이사항을 파악합니다.
+
+```{r ex4-a}
+souvenirs |>
+  autoplot(Sales) +
+  labs(title = "기념품 가게 월별 매출 추이", x = "연월", y = "매출액") +
+  theme_bw(base_family = "AppleGothic")
+```
+
+**💡 시각화 해석:**
+
+* **우상향 추세:** 가게의 전반적인 매출이 꾸준하게 상승하는 추세가 나타납니다.
+* **강한 계절성:** 매년 연말(12월)에 크리스마스 관광객 증가 등의 영향으로 추정되는 급격한 매출 상승이 관찰됩니다.
+* **특이 변동:** 1988년부터 매년 3월마다 서핑 축제가 열려, 평소의 3월과는 다른 예외적인 매출 상승이 보입니다.
+* **곱셈적 계절성:** 시간이 지남에 따라 매출이 오르면서 계절 변동의 진폭(분산)도 같이 커지는 전형적인 곱셈적 계절성의 특징을 보입니다.
+
+### (b) 모델 적합 전 로그 변환의 필요성
+
+**💡 해석:**
+
+그래프에서 확인했듯, 이 데이터는 시간이 지날수록 변동폭이 점차 커지는 곱셈적 계절성을 띠고 있습니다. 이 상태로 선형 회귀 모형을 적합하면 분산이 일정해야 한다는 가정을 위배하게 됩니다. 따라서 매출 변수에 로그(log)를 취해 변동폭을 일정하게 만들어 줌으로써(덧셈적 계절성으로 변환) 등분산성을 만족시키기 위함입니다.
+
+### (c) 회귀 모형 적합
+
+선형 추세, 계절 더미 변수, 그리고 "서핑 축제" 더미 변수를 포함하여 로그 매출액에 대한 회귀 모형을 적합합니다.
+
+```{r ex4-c}
+# 1988년 이후 매년 3월 서핑 축제 더미 변수(surf) 추가
+souvenirs_mod <- souvenirs |>
+  mutate(surf = if_else(month(Month) == 3 & year(Month) >= 1988, 1, 0))
+
+fit_souv <- souvenirs_mod |>
+  model(TSLM(log(Sales) ~ trend() + season() + surf))
+
+tidy(fit_souv) |>
+  select(term, estimate, p.value) |>
+  knitr::kable(digits = 4, caption = "회귀 모형 적합 결과")
+```
+
+### (d) 잔차 플롯 분석을 통한 모형 평가
+
+잔차 플롯을 통해 적합된 모형에 문제가 남아있는지 확인합니다.
+
+```{r ex4-d, fig.width=10, fig.height=4, out.width="100%"}
+aug_souv <- augment(fit_souv)
+
+p1 <- aug_souv |>
+  ggplot(aes(x = Month, y = .innov)) +
+  geom_line() +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "red") +
+  labs(title = "시간에 따른 혁신 잔차 플롯", x = "시간", y = "혁신 잔차 (log 스케일)") +
+  theme_bw(base_family = "AppleGothic")
+
+p2 <- aug_souv |>
+  ggplot(aes(x = .fitted, y = .innov)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "red") +
+  labs(title = "적합값에 따른 혁신 잔차 플롯", x = "적합값 (log 스케일)", y = "혁신 잔차 (log 스케일)") +
+  theme_bw(base_family = "AppleGothic")
+
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
+
+**💡 해석:**
+
+시간 순서 플롯(왼쪽 그래프)을 보면 잔차가 0을 중심으로 무작위하지 않고 파동 형태의 패턴이 남아있어 자기상관 문제가 여전히 존재함을 보여줍니다. 적합값 대비 잔차 플롯(오른쪽 그래프)을 보면 잔차가 낮은 구간에 몰려 있고 높은 구간에 갈수록 흩어져 보이는데, 이는 이분산성이라기보다는 단순히 로그 스케일 상 매출이 적었던 초반 연도에 데이터가 더 많이 몰려 있어서 생기는 관측 수의 불균형 때문입니다. 실제로 바로 뒤의 월별 박스플롯을 보면 등분산성 가정은 대체로 잘 만족하고 있습니다.
+
+### (e) 월별 잔차 박스플롯 분석
+
+```{r ex4-e}
+aug_souv |>
+  mutate(Month_label = factor(month(Month, label = TRUE))) |>
+  ggplot(aes(x = Month_label, y = .innov)) +
+  geom_boxplot() +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "red") +
+  labs(title = "월별 잔차 박스플롯", x = "월", y = "잔차") +
+  theme_bw(base_family = "AppleGothic")
+```
+
+**💡 해석:**
+
+혁신 잔차의 월별 박스플롯을 확인한 결과, 로그 변환 덕분에 각 달의 잔차 변동폭이 전반적으로 고르게 안정화되어 등분산성 가정을 대체로 만족하고 있습니다. 이는 (b)에서 로그 변환의 필요성으로 제시한 근거가 실제로 효과가 있었음을 확인해줍니다.
+
+### (f) 회귀 계수(Coefficients)의 해석
+
+**💡 해석:**
+
+종속변수에 로그를 취했기 때문에 각 계수들은 대략적인 **비율 또는 퍼센트 변화율**을 의미합니다.
+
+* `trend()` = 0.0220: 매달 평균적으로 약 2.2%씩 매출이 성장하는 추세입니다.
+* `season()`: 기준월(1월) 대비 각 달의 매출 차이를 나타냅니다. 예를 들어 12월 계수(1.9622)는 1월보다 약 7.1배(e^1.96 ≈ 7.1) 높은 매출을 의미합니다. 특히 `season()year3`(3월)의 p-value가 0.1733으로 유일하게 통계적으로 유의하지 않게 나왔는데, 이는 우리가 추가한 `surf` 더미 변수가 이미 3월의 축제 효과를 설명해버려서 기존의 3월 계절 더미가 중복되어 유의성을 잃었기 때문입니다.
+* `surf` = 0.5015: 서핑 축제가 열리는 3월에는 평소 3월보다 매출이 약 65.1%(e^0.5015 ≈ 1.651) 추가적으로 상승합니다. 다만 이 더미 변수는 1988년 이전의 3월(`surf=0`)이 실제로는 존재하지 않으므로, 실질적으로는 `surf=0`인 3월 기저값이 모델 내에서만 존재하는 가상의 기준이라는 점을 염두에 두어야 합니다.
+
+### (g) Ljung-Box 검정 결과 해석
+
+```{r ex4-g}
+aug_souv |>
+  features(.innov, ljung_box, lag = 24) |>
+  knitr::kable()
+```
+
+**💡 해석:**
+
+Ljung-Box 검정 결과 p-value가 0.05보다 현저히 작게 나타났습니다. 따라서 "잔차가 백색소음이다"라는 귀무가설을 기각하게 되며, 잔차에 자기상관이 유의미하게 남아있음을 통계적으로 확인했습니다. 즉, 현재 선형 회귀 모형은 개선이 필요합니다.
+
+### (h) 1994~1996년 예측 및 예측 구간 생성
+
+앞서 적합한 모델을 활용하여 향후 3년(1994, 1995, 1996)의 월별 매출을 예측합니다.
+
+```{r ex4-h}
+# 예측을 위한 미래 36개월 데이터 생성 (3월마다 축제 더미=1 적용)
+future_data <- new_data(souvenirs_mod, 36) |>
+  mutate(surf = if_else(month(Month) == 3, 1, 0))
+
+fc_souv <- fit_souv |>
+  forecast(new_data = future_data)
+
+fc_souv |>
+  autoplot(souvenirs_mod, level = 95) +
+  labs(title = "1994~1996년 기념품 가게 매출 예측", x = "연월", y = "매출액") +
+  theme_bw(base_family = "AppleGothic")
+```
+
+**💡 예측 결과 해석:**
+
+예측 플롯을 보면 과거 데이터에서 관찰되었던 연말(12월) 피크와 매년 3월 서핑 축제로 인한 급증 패턴이 예측치에서도 일관되게 유지되는 것을 확인할 수 있습니다. 또한, 시간이 갈수록 예측 구간(95% 신뢰구간)이 점차 넓어지는 현상을 볼 수 있는데, 이는 로그 변환된 모델의 오차를 원래 스케일로 되돌리는 과정에서 미래로 갈수록 불확실성(분산)이 기하급수적으로 증폭되는 특성이 잘 반영되었기 때문입니다.
+
+### (i) 예측 모델 개선 방법
+
+**💡 해석:**
+
+일반적인 선형 회귀 모형에서는 잔차의 자기상관 문제가 해결되지 않았습니다. 따라서 이를 보완하기 위해 ARIMA 오차 모형을 결합한 **동적 회귀 모형(Dynamic Regression Model)**을 사용하면 남아있는 자기상관성을 적절히 모델링하여 예측의 정확도를 훨씬 높일 수 있습니다.
+
+
+# 연습문제 6: 아프가니스탄 연간 인구 (`global_economy`)
+
+> `global_economy` 데이터셋에 포함된 아프가니스탄의 연간 인구 데이터를 추출하여 시계열 추세 모델링을 수행합니다.
+> 이 데이터에는 1979년부터 1989년까지 지속된 소련-아프간 전쟁으로 인한 인구 정체라는 역사적 맥락이 뚜렷하게 반영되어 있습니다.
+> 본 연습문제에서는 전체 기간에 대한 단순 선형 추세 모델과 전쟁 기간을 고려하여 매듭(knots)을 설정한 조각별 선형 추세 모델(Piecewise linear model)을 적합한 뒤, 향후 예측의 현실성을 비교 분석합니다.
+
+### (a) 시계열 플롯 시각화 및 전쟁의 영향 파악
+
+```{r ex6-a}
+afg <- global_economy |>
+  filter(Country == "Afghanistan")
+
+afg |>
+  autoplot(Population) +
+  geom_vline(xintercept = 1979, linetype = "dashed", colour = "red", alpha = 0.7) +
+  geom_vline(xintercept = 1989, linetype = "dashed", colour = "blue", alpha = 0.7) +
+  labs(title = "아프가니스탄 연간 인구 추이", x = "연도", y = "인구(명)") +
+  theme_bw(base_family = "AppleGothic")
+```
+
+**💡 시각화 해석:**
+
+전체적으로 아프가니스탄의 인구는 우상향하며 꾸준히 증가하고 있습니다. 하지만 1979년(빨간 점선)부터 1989년(파란 점선) 사이의 소련-아프간 전쟁 기간 동안에는 인구가 줄어들거나 증가세가 완전히 꺾여 정체되는 현상이 매우 뚜렷하게 관찰됩니다.
+
+### (b) 선형 모델과 조각별 선형 모델(Piecewise) 비교
+
+일반 선형 추세 모델과 1980년, 1989년에 매듭(knots)을 준 조각별 선형 모델의 적합도를 비교합니다.
+
+```{r ex6-b}
+fit_afg <- afg |>
+  model(
+    linear = TSLM(Population ~ trend()),
+    piecewise = TSLM(Population ~ trend(knots = c(1980, 1989)))
+  )
+
+augment(fit_afg) |>
+  ggplot(aes(x = Year)) +
+  geom_line(aes(y = Population), linewidth = 1, alpha = 0.5) +
+  geom_line(aes(y = .fitted, colour = .model), linetype = "dashed", linewidth = 0.8) +
+  labs(title = "단순 선형 모델 vs 조각별 선형 모델 적합 결과", x = "연도", y = "인구(명)") +
+  theme_bw(base_family = "AppleGothic")
+
+glance(fit_afg) |>
+  select(.model, AICc, CV) |>
+  knitr::kable(caption = "두 모델의 적합도 비교")
+```
+
+**💡 모델 비교 해석:**
+
+단순 선형 모델(linear)은 직선 하나만을 사용하므로 전쟁 당시 인구가 정체되었던 큰 변화를 전혀 반영하지 못합니다. 반면 조각별 선형 모델(piecewise)은 당시의 인구 정체와 종전 이후의 가파른 회복세를 유연하게 따라갑니다. 그래프 상 인구 정체는 1979년부터 시작되는 것처럼 보이지만, 연간 데이터의 특성상 그 영향이 온전히 반영되어 추세선이 꺾이는 시점을 1980년으로 보고 1980년과 1989년에 매듭(knots)을 설정했습니다. 결과를 보면 AICc 값도 조각별 선형 모델이 더 낮아 기존 선형 모델보다 훨씬 더 잘 맞는다는 걸 알 수 있습니다.
+
+### (c) 향후 5년 예측 및 결과 논평
+
+```{r ex6-c}
+fc_afg <- fit_afg |>
+  forecast(h = 5)
+
+fc_afg |>
+  autoplot(afg, level = 95, alpha = 0.5) +
+  labs(title = "단순 선형 vs 조각별 선형 모델의 5년 인구 예측", x = "연도", y = "인구(명)") +
+  theme_bw(base_family = "AppleGothic")
+```
+
+**💡 예측 결과 논평:**
+
+* **단순 선형 모델(linear):** 조각별 선형 모델에 비해 예측값이 눈에 띄게 낮게 나옵니다. 전체 기간을 하나의 기울기로 퉁쳐서 추정하다 보니 과거 전쟁 시기의 정체기까지 평균에 깎여 들어가면서, 1989년 이후의 가파른 인구 성장세를 전혀 따라가지 못하고 낮게 예측하게 된 것입니다.
+* **조각별 선형 모델(piecewise):** 1989년 종전 이후의 최근 증가 추세를 바탕으로 예측선을 그리기 때문에, 단순 선형 모델보다는 지금의 성장세를 잘 따라가는 편입니다. 하지만 이 모델 역시 1989년 이후의 기울기를 그대로 미래로 찍 긋는 방식(외삽)에 불과합니다. 따라서 향후 벌어질 수 있는 분쟁이나 출산율 변화 등 인구 구조적인 큰 흐름을 예측에 담아내지는 못한다는 한계가 분명히 있습니다.

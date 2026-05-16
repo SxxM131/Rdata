@@ -1,0 +1,70 @@
+---
+title: "Forecasting: Principles and Practice - Chapter 2 Exercises"
+subtitle: "2.10 Exercise 7"
+author: "2176071KimSooMin"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: false
+    number_sections: false
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{fontspec}
+  - \setmainfont{AppleGothic}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo    = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width  = 7,
+  fig.height = 4
+)
+```
+
+```{r load-packages}
+library(fpp3)
+```
+
+## 시계열 랜덤 선택
+
+```{r select-series}
+set.seed(2176071)
+
+myseries <- aus_retail |>
+  filter(`Series ID` == sample(aus_retail$`Series ID`, 1))
+
+myseries |> distinct(`Series ID`, State, Industry)
+```
+
+## 시계열 그래프 탐색
+
+```{r autoplot, fig.height=3.5}
+myseries |> autoplot(Turnover)
+```
+그래프를 살펴보면 전반적으로 값이 꾸준히 오르는 상승세가 보이고, 매번 일정하게 튀어오르는 계절성도 확인된다.
+
+```{r gg-season}
+myseries |> gg_season(Turnover, labels = "both")
+```
+연도별로 겹쳐서 비교해 보면 매년 12월 근처에 매출이 크게 뛰는 경향을 볼 수 있다.
+
+```{r gg-subseries}
+myseries |> gg_subseries(Turnover)
+```
+파란색 평균선을 보면 12월이 압도적으로 높다. 
+
+```{r gg-lag}
+myseries |> gg_lag(Turnover, geom = "point")
+```
+lag 12쪽 산점도를 보면 직선 형태에 가장 가깝고 데이터가 몰려 선형 관계를 보인다. 이는 1년에 한 번 주기로 패턴이 일치한다는 것을 의미한다.
+
+```{r ACF-plot}
+myseries |>
+  ACF(Turnover, lag_max = 48) |>
+  autoplot()
+```
+ACF 봉우리가 lag 12의 배수인 12, 24, 36쪽에서 솟아 있어서 12개월 단위로 확실하게 계절성이 나타남을 다시금 알 수 있다. 추세 때문에 전반적인 ACF 값이 서서히 낮아지는 형태를 띠고 있다.
+
+전체적으로 강한 추세(Trend)와 12개월 주기의 계절성(Seasonality)이 관찰된다. 반면 뚜렷한 순환성(Cyclicity)은 관찰되지 않는다. 순환성은 보통 수년~수십 년 단위의 불규칙한 장기 주기로 나타나는데, 해당 소매 매출 시계열에서는 매년 일정한 계절성과 뚜렷한 장기 상승 추세가 지배적이다.
