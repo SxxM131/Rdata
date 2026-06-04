@@ -1,0 +1,439 @@
+---
+title: "PBS 데이터 계층적 시계열 예측 분석"
+author: "2176071 김수민"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    fig_caption: true
+    fig_width: 6.5
+    fig_height: 4.5
+header-includes:
+  - \usepackage{kotex}
+  - \setmainhangulfont[BoldFont={Apple SD Gothic Neo Bold}]{Apple SD Gothic Neo}
+  - \setsanshangulfont[BoldFont={Apple SD Gothic Neo Bold}]{Apple SD Gothic Neo}
+  - \setmonohangulfont{Apple SD Gothic Neo}
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{float}
+  - \usepackage{caption}
+  - \captionsetup[figure]{labelfont=bf}
+  - \usepackage{geometry}
+  - \geometry{margin=2.5cm}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo      = TRUE,
+  warning   = FALSE,
+  message   = FALSE,
+  fig.pos   = "H",
+  out.extra = "",
+  out.width = "\\textwidth"
+)
+
+library(fpp3)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+```
+
+---
+
+# 서론
+
+본 분석은 호주 약품 급여 제도(Pharmaceutical Benefits Scheme, PBS) 데이터를 활용하여 **계층적 시계열 예측(Hierarchical Time Series Forecasting)**을 수행합니다.
+
+PBS 데이터는 다음과 같은 집계 구조를 가집니다:
+
+$$\text{ATC1} / \text{ATC2} \times \text{Concession} \times \text{Type}$$
+
+본 보고서에서는 다음을 순서대로 다룹니다:
+
+1. `Concession`, `Type`, `ATC1`별 집계 데이터 시각화
+2. ETS, ARIMA, SNAIVE 모델을 이용한 예측 (마지막 3년 제외)
+3. MinT(Minimum Trace) 조정법을 이용한 예측 조화(Reconciliation)
+4. 테스트 셋에서의 모델 성능 비교
+5. 조화가 예측 정확도에 미치는 영향 분석
+6. SNAIVE 예측에 조화가 차이를 만들지 못하는 이유 설명
+
+---
+
+# 데이터 탐색
+
+## PBS 데이터 로드 및 구조 확인
+
+```{r load-data}
+data("PBS")
+glimpse(PBS)
+```
+
+```{r data-summary}
+cat("관측치 수:", nrow(PBS), "\n")
+cat("시작 시점:", as.character(min(PBS$Month)), "\n")
+cat("종료 시점:", as.character(max(PBS$Month)), "\n")
+cat("ATC1 수준:", n_distinct(PBS$ATC1), "\n")
+cat("ATC2 수준:", n_distinct(PBS$ATC2), "\n")
+cat("Concession 수준:", n_distinct(PBS$Concession), "\n")
+cat("Type 수준:", n_distinct(PBS$Type), "\n")
+```
+
+PBS 데이터는 월별 시계열로 구성되어 있으며, 집계 구조는 다음과 같습니다:
+
+- **ATC1**: 약물 분류 대분류 (7개 수준)
+- **ATC2**: 약물 분류 소분류 (ATC1의 하위 분류)
+- **Concession**: 수급 자격 (Concessional / General)
+- **Type**: 처방 유형 (Co-payments / Safety net)
+
+## 계층 구조 정의
+
+```{r define-hierarchy}
+PBS_aggregated <- PBS |>
+  aggregate_key(
+    ATC1 / ATC2 * Concession * Type,
+    Scripts = sum(Scripts),
+    Cost    = sum(Cost)
+  )
+```
+
+---
+
+# 탐색적 데이터 분석 (EDA)
+
+## Concession별 Scripts 집계 시각화
+
+```{r plot-concession, fig.cap="Concession 유형별 월별 처방 건수 추이", fig.height=5}
+PBS_aggregated |>
+  filter(
+    is_aggregated(ATC1),
+    is_aggregated(ATC2),
+    !is_aggregated(Concession),
+    is_aggregated(Type)
+  ) |>
+  autoplot(Scripts) +
+  facet_wrap(~ as.character(Concession), scales = "free_y", ncol = 1) +
+  labs(
+    title = "Concession 유형별 월별 처방 건수",
+    x     = "연월",
+    y     = "처방 건수"
+  ) +
+  theme_bw(base_size = 12) +
+  theme(legend.position = "none")
+```
+
+**해석:** Concessional(수급자) 처방 건수는 General(일반) 처방 건수보다 훨씬 높으며, 두 유형 모두 뚜렷한 계절성 패턴을 보입니다. Concessional 건수는 시간에 따라 점진적 감소 추세가 관찰됩니다.
+
+## Type별 Scripts 집계 시각화
+
+```{r plot-type, fig.cap="처방 유형별 월별 처방 건수 추이", fig.height=5}
+PBS_aggregated |>
+  filter(
+    is_aggregated(ATC1),
+    is_aggregated(ATC2),
+    is_aggregated(Concession),
+    !is_aggregated(Type)
+  ) |>
+  autoplot(Scripts) +
+  facet_wrap(~ as.character(Type), scales = "free_y", ncol = 1) +
+  labs(
+    title = "처방 유형(Type)별 월별 처방 건수",
+    x     = "연월",
+    y     = "처방 건수"
+  ) +
+  theme_bw(base_size = 12) +
+  theme(legend.position = "none")
+```
+
+**해석:** Co-payments(공동 부담) 유형이 Safety net(안전망) 유형보다 처방 건수가 현저히 높습니다. Safety net 유형은 계절성이 더욱 두드러지며, 연말에 급격한 증가 패턴이 나타납니다.
+
+## ATC1별 Scripts 집계 시각화
+
+```{r plot-atc1, fig.cap="ATC1 약물 분류별 월별 처방 건수 추이", fig.height=6}
+PBS_aggregated |>
+  filter(
+    !is_aggregated(ATC1),
+    is_aggregated(ATC2),
+    is_aggregated(Concession),
+    is_aggregated(Type)
+  ) |>
+  autoplot(Scripts) +
+  facet_wrap(~ as.character(ATC1), scales = "free_y") +
+  labs(
+    title = "ATC1 약물 분류별 월별 처방 건수",
+    x     = "연월",
+    y     = "처방 건수"
+  ) +
+  theme_bw(base_size = 10) +
+  theme(legend.position = "none")
+```
+
+**해석:** ATC1 분류에 따라 처방 건수의 규모와 패턴이 크게 다릅니다. 일부 분류는 완만한 증가 추세를 보이는 반면, 뚜렷한 계절적 변동이 관찰되는 분류도 존재합니다.
+
+---
+
+# 예측 모델링
+
+## 훈련/테스트 데이터 분할
+
+마지막 3년(36개월)을 테스트 셋으로 분리합니다.
+
+```{r train-test-split}
+test_horizon <- 36
+
+max_date  <- max(PBS_aggregated$Month)
+train_end <- max_date - test_horizon
+
+cat("전체 데이터 기간:", as.character(min(PBS_aggregated$Month)),
+    "~", as.character(max_date), "\n")
+cat("훈련 데이터 종료:", as.character(train_end), "\n")
+cat("테스트 데이터 기간:", as.character(train_end + 1),
+    "~", as.character(max_date), "\n")
+
+PBS_train <- PBS_aggregated |> filter(Month <= train_end)
+PBS_test  <- PBS_aggregated |> filter(Month >  train_end)
+```
+
+## 예측 모델 적합
+
+세 가지 모델을 훈련 데이터에 적합합니다:
+
+- **ETS**: 지수 평활 상태 공간 모델
+- **ARIMA**: 자기회귀 누적 이동평균 모델 (자동 선택)
+- **SNAIVE**: 계절적 순진 예측 모델
+
+```{r fit-models, cache=TRUE}
+PBS_fit <- PBS_train |>
+  model(
+    ets    = ETS(Scripts),
+    arima  = ARIMA(Scripts),
+    snaive = SNAIVE(Scripts)
+  )
+
+cat("적합된 시계열 수:", nrow(PBS_fit), "\n")
+```
+
+---
+
+# 예측 조화 (Reconciliation)
+
+## MinT(Minimum Trace) 조정법
+
+**MinT** 방법은 계층적 시계열 예측의 조화 기법으로, 예측값들이 계층 구조의 집계 제약 조건을 만족하도록 조정합니다. 조화된 예측의 오차 공분산 행렬의 trace를 최소화하는 방식으로 조정 행렬 $G$를 추정합니다:
+
+$$\tilde{\mathbf{y}}_T = S G \hat{\mathbf{y}}_T$$
+
+여기서 $S$는 합산 행렬(Summing matrix), $\hat{\mathbf{y}}_T$는 기저 예측값, $\tilde{\mathbf{y}}_T$는 조화된 예측값입니다.
+
+본 분석에서는 `ols` 방법을 적용합니다. PBS 데이터는 일부 하위 시계열(Safety net 계열 등)에 결측값 또는 0값이 포함되어 공분산 행렬이 singular해지므로, 공분산 추정이 필요 없는 `ols`가 유일하게 안정적으로 작동합니다.
+
+## 예측 생성 및 조화
+
+```{r generate-forecasts, cache=TRUE}
+# reconcile()로 조화 모델을 먼저 정의한 뒤 forecast() 호출
+PBS_fc <- PBS_fit |>
+  reconcile(
+    ets_mint    = min_trace(ets,    method = "ols"),
+    arima_mint  = min_trace(arima,  method = "ols"),
+    snaive_mint = min_trace(snaive, method = "ols")
+  ) |>
+  forecast(h = test_horizon)
+
+cat("예측 생성 완료\n")
+```
+
+## 집계 수준에서의 예측 시각화
+
+```{r plot-forecasts-total, fig.cap="전체 집계 수준에서의 모델별 예측 비교"}
+PBS_fc |>
+  filter(
+    is_aggregated(ATC1),
+    is_aggregated(ATC2),
+    is_aggregated(Concession),
+    is_aggregated(Type)
+  ) |>
+  autoplot(
+    PBS_aggregated |> filter(Month > yearmonth("2003 Jan")),
+    level = NULL
+  ) +
+  labs(
+    title  = "전체 집계 수준 - 모델별 처방 건수 예측",
+    x      = "연월",
+    y      = "처방 건수",
+    colour = "모델"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(legend.position = "bottom")
+```
+
+---
+
+# 예측 정확도 평가
+
+## 정확도 지표 계산
+
+MAPE는 실제값이 0인 시계열에서 무한대가 되므로, RMSSE와 MASE만 사용합니다.
+
+```{r accuracy-calculation}
+accuracy_results <- PBS_fc |>
+  accuracy(
+    data     = PBS_aggregated,
+    measures = list(RMSSE = RMSSE, MASE = MASE)
+  )
+
+accuracy_results
+```
+
+## 모델별 평균 정확도 비교
+
+```{r accuracy-summary}
+acc_summary <- accuracy_results |>
+  filter(!is.infinite(RMSSE), !is.infinite(MASE)) |>
+  group_by(.model) |>
+  summarise(
+    평균_RMSSE = mean(RMSSE, na.rm = TRUE),
+    평균_MASE  = mean(MASE,  na.rm = TRUE),
+    .groups    = "drop"
+  ) |>
+  arrange(평균_RMSSE) |>
+  rename(모델 = .model)
+
+kable(
+  acc_summary,
+  caption  = "모델별 평균 예측 정확도 (낮을수록 좋음)",
+  digits   = 4,
+  booktabs = TRUE
+) |>
+  kable_styling(
+    latex_options = c("striped", "hold_position"),
+    full_width    = FALSE
+  ) |>
+  row_spec(1, bold = TRUE, background = "#d4edda")
+```
+
+## 조화 전후 RMSSE 비교 (박스플롯)
+
+```{r accuracy-comparison, fig.cap="조화 전후 모델별 RMSSE 분포 비교"}
+acc_plot <- accuracy_results |>
+  filter(!is.na(RMSSE), !is.infinite(RMSSE)) |>
+  mutate(
+    base_model = case_when(
+      .model %in% c("ets",    "ets_mint")    ~ "ETS",
+      .model %in% c("arima",  "arima_mint")  ~ "ARIMA",
+      .model %in% c("snaive", "snaive_mint") ~ "SNAIVE"
+    ),
+    reconciled = ifelse(grepl("_mint", .model), "조화 후 (MinT)", "조화 전 (기저)")
+  )
+
+acc_plot |>
+  ggplot(aes(x = base_model, y = RMSSE, fill = reconciled)) +
+  geom_boxplot(alpha = 0.7, outlier.alpha = 0.3) +
+  scale_fill_manual(
+    values = c("조화 전 (기저)" = "#4472C4", "조화 후 (MinT)" = "#ED7D31")
+  ) +
+  coord_cartesian(ylim = c(0, quantile(acc_plot$RMSSE, 0.95))) +
+  labs(
+    title = "모델별 RMSSE 분포: 조화 전 vs 조화 후",
+    x     = "모델",
+    y     = "RMSSE (낮을수록 좋음)",
+    fill  = "조화 여부"
+  ) +
+  theme_bw(base_size = 12) +
+  theme(legend.position = "bottom")
+```
+
+---
+
+# 결과 해석 및 논의
+
+## 어떤 모델이 가장 우수한가?
+
+```{r best-model-analysis}
+best_model <- acc_summary |> slice(1) |> pull(모델)
+cat("테스트 셋 기준 최우수 모델:", best_model, "\n")
+```
+
+**분석 결과:**
+
+테스트 셋 기준 최우수 모델은 **ARIMA**(평균 RMSSE 2.30)이며, ETS(2.32), SNAIVE(2.39) 순입니다. 세 모델의 차이는 크지 않으나, ARIMA가 PBS 데이터의 자기상관 구조를 효과적으로 포착하여 소폭 우위를 보였습니다. SNAIVE는 단순한 계절적 참조 모델임에도 ETS, ARIMA와 큰 차이 없이 선전했는데, 이는 PBS 처방 건수가 강한 계절성을 가지기 때문입니다.
+
+## 조화가 예측 정확도를 개선하는가?
+
+```{r reconciliation-improvement}
+# 기저 모델과 MinT 모델 RMSSE 비교
+base_rmsse <- acc_summary |>
+  filter(!grepl("_mint", 모델)) |>
+  mutate(모델_키 = toupper(모델)) |>
+  select(모델_키, 기저_RMSSE = 평균_RMSSE)
+
+mint_rmsse <- acc_summary |>
+  filter(grepl("_mint", 모델)) |>
+  mutate(모델_키 = toupper(gsub("_mint", "", 모델))) |>
+  select(모델_키, MinT_RMSSE = 평균_RMSSE)
+
+reconcile_comparison <- base_rmsse |>
+  left_join(mint_rmsse, by = "모델_키") |>
+  mutate(
+    개선율_pct = round((기저_RMSSE - MinT_RMSSE) / 기저_RMSSE * 100, 2),
+    개선_여부  = ifelse(개선율_pct > 0, "개선됨", "미개선")
+  ) |>
+  rename(모델 = 모델_키)
+
+kable(
+  reconcile_comparison,
+  caption  = "MinT 조화 전후 RMSSE 비교 및 개선율",
+  digits   = 4,
+  booktabs = TRUE
+) |>
+  kable_styling(latex_options = c("striped", "hold_position")) |>
+  column_spec(4, bold = TRUE)
+```
+
+**결론:**
+
+이 데이터에서 `ols` 기반 MinT 조화는 **ETS와 ARIMA의 예측 정확도를 오히려 크게 악화**시켰습니다 (ARIMA: 2.30 → 67.04, ETS: 2.32 → 104.93). 이는 `ols` 방법의 구조적 한계에서 비롯됩니다.
+
+`ols` MinT는 공분산 행렬 추정 없이 단순 최소제곱으로 조정 행렬 $G$를 구하기 때문에, Safety net처럼 값이 0에 가깝거나 분산이 매우 작은 하위 시계열이 다수 포함된 경우 음수 예측값이 발생할 수 있습니다. 처방 건수(Scripts)는 음수가 불가능한 변수이므로, 음수 예측값이 생긴 시계열의 RMSSE는 극단적으로 커지고 이것이 전체 평균을 왜곡합니다.
+
+MinT가 이론적으로 효과를 발휘하려면 공분산 구조를 제대로 추정할 수 있어야 합니다. `wls_var`나 `mint_shr` 같은 방법이 더 적합하지만, PBS 데이터는 시계열 수(900개)에 비해 관측 기간이 짧고 0값 시계열이 많아 이 방법들도 공분산 행렬이 singular해지는 문제가 발생합니다. 결과적으로 이 데이터에서는 `ols` MinT가 유일하게 실행 가능한 옵션이지만, 그 결과는 기저 예측보다 나쁩니다.
+
+## SNAIVE 조화가 효과가 없는 이유
+
+**SNAIVE(Seasonal Naive)** 모델은 지난 해 같은 달의 실제 관측값을 그대로 사용하는 예측 방법입니다:
+
+$$\hat{y}_{T+h|T} = y_{T+h-m}, \quad m = 12$$
+
+MinT 조화가 SNAIVE에 효과가 없는 핵심 이유는 **SNAIVE 예측이 이미 집계 일관성(coherence)을 만족**하기 때문입니다.
+
+실제 관측값은 계층 구조를 당연히 만족합니다. 즉,
+
+$$y^{\text{total}}_{t} = \sum_j y^j_{t}$$
+
+SNAIVE는 이 실제값을 그대로 복사하므로, 기저 예측 자체가 이미 다음을 만족합니다:
+
+$$\hat{y}^{\text{total}}_{T+h} = y^{\text{total}}_{T+h-12} = \sum_j y^j_{T+h-12} = \sum_j \hat{y}^j_{T+h}$$
+
+따라서 MinT 조화 행렬 $G$를 적용해도 조화 후 값이 조화 전 값과 동일합니다:
+
+$$\tilde{\mathbf{y}} = SG\hat{\mathbf{y}} = \hat{\mathbf{y}}$$
+
+이는 SNAIVE의 단점이 아니라 구조적 특성입니다. 반면 ETS나 ARIMA는 각 시계열을 독립적으로 최적화하므로 집계 불일치가 발생하고, MinT 조화의 효과가 나타납니다.
+
+---
+
+# 요약 및 결론
+
+| 항목 | 결론 |
+|------|------|
+| **최우수 기저 모델** | ARIMA (평균 RMSSE 2.30) |
+| **조화 효과 (ETS, ARIMA)** | 없음 — `ols` MinT가 오히려 정확도 악화 |
+| **SNAIVE 조화 효과** | 없음 — 이미 집계 일관성 만족 |
+| **권장 모델** | 기저 ARIMA 또는 ETS |
+
+**핵심 발견사항:**
+
+1. 기저 모델 중에서는 ARIMA가 가장 우수하며, ETS, SNAIVE 순으로 성능 차이가 크지 않습니다. PBS 처방 건수의 강한 계절성 덕분에 SNAIVE도 나쁘지 않은 성능을 보입니다.
+2. `ols` MinT 조화는 이 데이터에서 예측 정확도를 개선하지 못했습니다. Safety net 등 0값이 많은 하위 시계열에서 음수 예측값이 발생하고, 이로 인해 RMSSE가 극단적으로 커졌기 때문입니다. MinT가 효과를 내려면 공분산 행렬이 안정적으로 추정돼야 하는데, 이 데이터는 그 조건을 만족하지 못합니다.
+3. SNAIVE 예측은 실제 관측값의 직접 복사이므로 집계 구조를 자동으로 만족합니다. MinT 조화를 적용해도 예측값이 변하지 않으며, 이는 모델의 한계가 아닌 구조적 특성입니다.
